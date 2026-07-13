@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Famille</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#1e1b4b; --bg2:#3730a3; --bg3:#0f172a;
+    --accent:#f59e0b; --accent2:#fb923c; --good:#22c55e;
+    --danger:#ef4444; --card:#ffffff; --text:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; font-family:'Poppins',Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(245,158,11,.25), transparent 40%),
+      radial-gradient(circle at 85% 25%, rgba(99,102,241,.35), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(34,197,94,.18), transparent 40%),
+      linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+    background-attachment:fixed;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    color:var(--text);
+  }
+  .app{width:100%; max-width:600px;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 18px; margin-bottom:12px; border-radius:16px;
+    background:rgba(255,255,255,.12); backdrop-filter:blur(8px);
+    color:#fff; font-size:.85rem; font-weight:600;
+  }
+  .topbar .me{display:flex; align-items:center; gap:8px;}
+  .topbar .avatar{
+    width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex; align-items:center; justify-content:center; font-size:1rem;
+  }
+  .topbar button{
+    background:rgba(255,255,255,.15); border:none; color:#fff; border-radius:10px;
+    padding:7px 10px; cursor:pointer; font-size:1rem;
+  }
+  .topbar button:hover{background:rgba(255,255,255,.28);}
+  .card{
+    background:var(--card); border-radius:24px; padding:30px 26px;
+    box-shadow:0 25px 70px rgba(0,0,0,.4); animation:fadeIn .35s ease;
+  }
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  h1{font-size:1.5rem; margin:0 0 4px; text-align:center; color:#1e1b4b; font-weight:800;}
+  .subtitle{text-align:center; color:var(--muted); margin:0 0 22px; font-size:.92rem;}
+  label{display:block; font-weight:600; margin:16px 0 8px; font-size:.9rem; color:#334155;}
+  select, input[type=text], input[type=password]{
+    width:100%; padding:12px 13px; border-radius:12px; border:1.5px solid #e2e8f0;
+    font-size:1rem; background:#f8fafc; font-family:inherit;
+  }
+  .theme-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .theme-btn{
+    border:2px solid #e2e8f0; background:#f8fafc; border-radius:16px; padding:16px 10px;
+    text-align:center; cursor:pointer; font-size:.95rem; font-weight:600; transition:.15s;
+  }
+  .theme-btn:hover{border-color:var(--accent); transform:translateY(-2px);}
+  .theme-btn.selected{border-color:var(--accent); background:linear-gradient(135deg,#fff7ed,#ffedd5); color:#b45309;}
+  .name-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .name-btn{
+    border:2px solid #e2e8f0; background:#f8fafc; border-radius:16px; padding:18px 10px;
+    text-align:center; cursor:pointer; font-weight:700; transition:.15s; font-size:1.02rem;
+  }
+  .name-btn .emoji{font-size:1.8rem; display:block; margin-bottom:4px;}
+  .name-btn:hover{border-color:var(--accent); transform:translateY(-2px);}
+  .name-btn.selected{border-color:var(--accent); background:linear-gradient(135deg,#fff7ed,#ffedd5);}
+  .players{display:flex; flex-direction:column; gap:8px;}
+  .player-row{
+    display:flex; align-items:center; gap:10px; background:#f8fafc; border:1.5px solid #e2e8f0;
+    border-radius:12px; padding:10px 12px;
+  }
+  .player-row input[type=checkbox]{width:18px; height:18px;}
+  .player-row span{font-weight:600;}
+  .btn{
+    display:block; width:100%; padding:15px; border:none; border-radius:14px;
+    font-size:1.05rem; font-weight:700; cursor:pointer; margin-top:18px; transition:.15s;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#1e1b4b; box-shadow:0 8px 20px rgba(245,158,11,.35);}
+  .btn-primary:hover{filter:brightness(1.05); transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.45; cursor:not-allowed; box-shadow:none; transform:none;}
+  .btn-secondary{background:#eef2ff; color:#3730a3;}
+  .btn-danger{background:#fee2e2; color:#b91c1c;}
+  .btn-link{display:block; width:100%; text-align:center; background:none; border:none; color:#6366f1; text-decoration:underline; padding:10px; font-weight:600; cursor:pointer; font-size:.92rem;}
+  .footer-actions{display:flex; gap:10px; margin-top:20px;}
+  .footer-actions .btn{margin-top:0;}
+
+  .intro-avatar{font-size:3.4rem; text-align:center; margin-bottom:6px;}
+  .intro-name{text-align:center; font-size:1.6rem; font-weight:800; color:#1e1b4b; margin-bottom:6px;}
+  .intro-hint{text-align:center; color:var(--muted); margin-bottom:6px; font-size:.92rem;}
+
+  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .quiz-progress{font-size:.85rem; color:var(--muted); font-weight:600;}
+  .timer-badge{
+    font-weight:800; font-size:1.05rem; padding:5px 13px; border-radius:20px;
+    background:#eef2ff; color:#4338ca; min-width:52px; text-align:center;
+  }
+  .timer-badge.warn{background:#fee2e2; color:#b91c1c;}
+  .progress-bar-bg{width:100%; height:8px; background:#e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:20px;}
+  .progress-bar-fill{height:100%; background:linear-gradient(90deg,#22c55e,#f59e0b); transition:width .3s linear;}
+  .question-text{font-size:1.15rem; font-weight:700; margin-bottom:18px; color:#1e1b4b; line-height:1.4;}
+  .options{display:flex; flex-direction:column; gap:10px;}
+  .option{
+    text-align:left; padding:14px 16px; border-radius:14px; border:2px solid #e2e8f0;
+    background:#f8fafc; cursor:pointer; font-size:.98rem; font-weight:600; color:#334155;
+    transition:.12s;
+  }
+  .option:hover{border-color:#a5b4fc; transform:translateX(2px);}
+  .option.correct{background:#dcfce7; border-color:#22c55e; color:#166534;}
+  .option.wrong{background:#fee2e2; border-color:#ef4444; color:#991b1b;}
+  .option.disabled{pointer-events:none;}
+
+  .rank-row{
+    display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px;
+    background:#f8fafc; margin-bottom:8px; position:relative; overflow:hidden;
+  }
+  .rank-row.me{border:2px solid var(--accent);}
+  .rank-row.top1{background:linear-gradient(90deg,#fef9c3,#fde68a);}
+  .rank-medal{font-size:1.4rem; width:32px; text-align:center; z-index:1;}
+  .rank-name{flex:1; font-weight:700; z-index:1;}
+  .rank-score{font-weight:800; color:#1e1b4b; z-index:1;}
+  .rank-bar{position:absolute; left:0; top:0; bottom:0; background:rgba(245,158,11,.15); z-index:0;}
+  .section-title{font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:22px 0 10px; font-weight:700;}
+  .small-note{font-size:.78rem; color:var(--muted); text-align:center; margin-top:14px;}
+  .hidden{display:none !important;}
+  .pin-input{text-align:center; font-size:1.6rem; letter-spacing:.4em; margin-top:14px;}
+  .pin-error{color:#b91c1c; text-align:center; margin-top:10px; font-size:.85rem; min-height:1em;}
+  .badge{display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; background:#eef2ff; color:#3730a3; margin-left:6px;}
+  .spinner{width:34px; height:34px; border:4px solid #e2e8f0; border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin:20px auto;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar hidden" id="topbar"></div>
+  <div class="card" id="app-card"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ================================================================
+   CONFIGURATION FIREBASE
+   Remplace les valeurs ci-dessous par celles de TON projet Firebase
+   (Console Firebase > Paramètres du projet > Tes applications > Config).
+   Voir SETUP_INSTRUCTIONS.md pour le pas-à-pas complet.
+================================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyD3npa9nfJ9Nc0g52JQeNpyhcYRO7Mxuzo",
+  authDomain: "quizz-nguem.firebaseapp.com",
+  projectId: "quizz-nguem",
+  storageBucket: "quizz-nguem.firebasestorage.app",
+  messagingSenderId: "1063925717604",
+  appId: "1:1063925717604:web:42725e4753be66b5fb5d71"
+};
+
+/* Code admin : c'est ce qui te permet, et toi seul, de choisir le jeu de la semaine.
+   Change cette valeur quand tu veux, directement ici. */
+const PIN_CODE = "1991";
+
+const PLAYER_AVATARS = {
+  "Jopa":"🦉", "Majes":"🦁", "Thurell":"🐯", "Bambi":"🐻"
+};
+function avatarFor(name){ return PLAYER_AVATARS[name] || "🙂"; }
+
+/* ============== BANQUE DE QUESTIONS (QUIZ CULTURE) ============== */
+const THEMES = {
+  football: { label:"⚽ Football", emoji:"⚽", questions:[
+    {q:"Combien de joueurs une équipe aligne-t-elle sur le terrain, gardien inclus ?", options:["11","10","9","12"], correct:"11"},
+    {q:"Quel pays a remporté la Coupe du Monde 2022 au Qatar ?", options:["Argentine","France","Croatie","Brésil"], correct:"Argentine"},
+    {q:"Quel pays a organisé la Coupe du Monde 2022 ?", options:["Qatar","Émirats Arabes Unis","Arabie Saoudite","Koweït"], correct:"Qatar"},
+    {q:"Quelle sélection africaine a atteint les demi-finales du Mondial 2022, une première pour le continent ?", options:["Maroc","Sénégal","Cameroun","Ghana"], correct:"Maroc"},
+    {q:"Quelle équipe ne faisait PAS partie des demi-finalistes du Mondial 2022 ?", options:["Brésil","Argentine","France","Croatie"], correct:"Brésil"},
+    {q:"Quel a été le score du quart de finale Brésil - Croatie, après prolongation et avant les tirs au but ?", options:["1-1","2-1","0-0","2-2"], correct:"1-1"},
+    {q:"Quel joueur a inscrit un triplé en finale de la Coupe du Monde 2022, malgré la défaite de son équipe ?", options:["Kylian Mbappé","Lionel Messi","Olivier Giroud","Antoine Griezmann"], correct:"Kylian Mbappé"},
+    {q:"Combien de Coupes du Monde le Brésil a-t-il remportées, un record mondial ?", options:["5","4","6","3"], correct:"5"},
+    {q:"Quel gardien croate a été le héros de la séance de tirs au but face au Brésil en 2022 ?", options:["Dominik Livakovic","Danijel Subasic","Marc-André ter Stegen","Yassine Bounou"], correct:"Dominik Livakovic"},
+    {q:"Combien de minutes dure le temps réglementaire d'un match de football ?", options:["90 minutes","80 minutes","100 minutes","120 minutes"], correct:"90 minutes"},
+    {q:"Quel pays est considéré comme le berceau des règles du football moderne, codifiées au 19e siècle ?", options:["Angleterre","Italie","Écosse","France"], correct:"Angleterre"},
+    {q:"Combien de joueurs maximum chaque sélection pouvait-elle inscrire dans son groupe pour le Mondial 2022 ?", options:["26","23","25","28"], correct:"26"},
+    {q:"Qui détient le record du plus grand nombre de buts marqués en phases finales de Coupe du Monde (16 buts) ?", options:["Miroslav Klose","Ronaldo Nazário","Pelé","Just Fontaine"], correct:"Miroslav Klose"},
+    {q:"Quelle sanction reçoit un joueur averti deux fois (deux cartons jaunes) dans le même match ?", options:["Carton rouge (exclusion)","Simple avertissement","Penalty contre son équipe","Rien, il continue"], correct:"Carton rouge (exclusion)"},
+    {q:"Combien de temps dure la pause à la mi-temps d'un match officiel ?", options:["15 minutes","10 minutes","20 minutes","5 minutes"], correct:"15 minutes"},
+    {q:"Quel joueur a disputé plus de matchs sous le maillot du PSG que Neymar (173 matchs) ?", options:["Marco Verratti","David Beckham","Ronaldinho","Éric Choupo-Moting"], correct:"Marco Verratti"},
+    {q:"Qui détient le record du nombre de Ballons d'Or remportés (8 au total) ?", options:["Lionel Messi","Cristiano Ronaldo","Michel Platini","Johan Cruyff"], correct:"Lionel Messi"},
+    {q:"Quel club détient le record de titres en Ligue des Champions / Coupe d'Europe des clubs champions ?", options:["Le Real Madrid","L'AC Milan","Le Bayern Munich","Liverpool"], correct:"Le Real Madrid"},
+    {q:"Quel joueur détient le record de buts inscrits lors d'une seule édition de la Coupe du Monde, avec 13 buts en 1958 ?", options:["Just Fontaine","Pelé","Gerd Müller","Ronaldo Nazário"], correct:"Just Fontaine"},
+    {q:"Quel gardien de but est le seul de l'histoire à avoir remporté le Ballon d'Or (1963) ?", options:["Lev Yachine","Gianluigi Buffon","Iker Casillas","Manuel Neuer"], correct:"Lev Yachine"},
+    {q:"Qui est le meilleur buteur de l'histoire de la Ligue des Champions ?", options:["Cristiano Ronaldo","Lionel Messi","Robert Lewandowski","Karim Benzema"], correct:"Cristiano Ronaldo"},
+    {q:"Quel joueur camerounais, célèbre pour ses célébrations de but près du poteau de corner, est une légende du Mondial 1990 ?", options:["Roger Milla","Samuel Eto'o","Rigobert Song","Patrick Mboma"], correct:"Roger Milla"},
+    {q:"Combien de fois le Cameroun (Lions Indomptables) a-t-il remporté la Coupe d'Afrique des Nations ?", options:["5 fois","3 fois","4 fois","2 fois"], correct:"5 fois"},
+    {q:"Quel pays a remporté la CAN 2023, disputée en janvier-février 2024, en tant que pays hôte ?", options:["La Côte d'Ivoire","Le Nigéria","Le Sénégal","Le Maroc"], correct:"La Côte d'Ivoire"},
+    {q:"Quel est le surnom de l'équipe nationale du Cameroun ?", options:["Les Lions Indomptables","Les Éléphants","Les Aigles","Les Panthères"], correct:"Les Lions Indomptables"},
+    {q:"Quel est le stade mythique du FC Barcelone ?", options:["Le Camp Nou","Le Santiago Bernabéu","San Siro","L'Allianz Arena"], correct:"Le Camp Nou"}
+  ]},
+  dragonball: { label:"🐉 Dragon Ball", emoji:"🐉", questions:[
+    {q:"Quelle est la planète d'origine de Goku et Vegeta ?", options:["Végéta","Namek","Terre","Yardrat"], correct:"Végéta"},
+    {q:"Quel personnage est tristement célèbre pour mourir un grand nombre de fois au fil de la série ?", options:["Krillin","Yamcha","Ten Shin Han","Piccolo"], correct:"Krillin"},
+    {q:"Combien y a-t-il de Dragon Balls au total ?", options:["7","5","9","10"], correct:"7"},
+    {q:"Qui est le Gardien de la Terre à l'origine de la création des Dragon Balls terrestres ?", options:["Kami","Piccolo Daimao","Maître Roshi","Mr Popo"], correct:"Kami"},
+    {q:"Quelle transformation Goku obtient-il pour la première fois face à Freezer sur Namek ?", options:["Super Saiyan","Super Saiyan 2","Super Saiyan Blue","Kaioken"], correct:"Super Saiyan"},
+    {q:"À quelle race extraterrestre Piccolo appartient-il ?", options:["Namekien","Saiyan","Majin","Kaioshin"], correct:"Namekien"},
+    {q:"Quel est le nom du grand frère de Goku, envoyé sur Terre pour le récupérer ?", options:["Raditz","Nappa","Turles","Broly"], correct:"Raditz"},
+    {q:"Quel maître entraîne Goku et Krillin durant leur enfance ?", options:["Maître Roshi","Maître Karin","Kaio","Piccolo"], correct:"Maître Roshi"},
+    {q:"Comment s'appelle la célèbre technique de vague d'énergie lancée à deux mains, popularisée par Goku ?", options:["Kamehameha","Masenko","Galick Gun","Big Bang Attack"], correct:"Kamehameha"},
+    {q:"Quel est le nom de l'antagoniste bio-artificiel capable d'absorber ses adversaires pour évoluer ?", options:["Cell","Freezer","Buu","Garlic Junior"], correct:"Cell"},
+    {q:"Avec qui Piccolo fusionne-t-il pour redevenir entier avant l'arrivée de Cell ?", options:["Kami","Nail","Dende","Kaio"], correct:"Kami"},
+    {q:"Quelle est la forme la plus pure et sauvage de Majin Buu ?", options:["Kid Buu","Buu Gras","Super Buu","Buu Originel"], correct:"Kid Buu"},
+    {q:"Quels deux personnages forment Gotenks grâce à la danse de fusion ?", options:["Goten et Trunks","Goku et Vegeta","Gohan et Goten","Trunks et Gohan"], correct:"Goten et Trunks"},
+    {q:"Quel Dieu de la Destruction vient défier Goku sur Terre dans Dragon Ball Super ?", options:["Beerus","Champa","Whis","Zeno"], correct:"Beerus"},
+    {q:"Quel est le nom du dragon sacré invoqué grâce aux 7 Dragon Balls réunies ?", options:["Shenron","Porunga","Nuova Shenron","Ultimate Shenron"], correct:"Shenron"},
+    {q:"Quel est le nom du père de Vegeta, roi des Saiyans ?", options:["Le Roi Vegeta","Le Roi Cold","Bardock","Paragus"], correct:"Le Roi Vegeta"},
+    {q:"Grâce à quel objet Goku et Vegeta peuvent-ils fusionner définitivement pour former Vegetto ?", options:["Les boucles d'oreilles Potara","La danse de fusion","Les Dragon Balls","Le Dévolueur"], correct:"Les boucles d'oreilles Potara"},
+    {q:"Sur Namek, quelle est la dernière forme de Freezer, la plus puissante, révélée face à Goku ?", options:["Sa forme finale (100%)","Sa deuxième forme","Sa troisième forme","Sa forme originelle"], correct:"Sa forme finale (100%)"},
+    {q:"Comment s'appelle la pièce où le temps s'écoule beaucoup plus lentement à l'extérieur, utilisée pour l'entraînement ?", options:["La Salle de l'Esprit et du Temps","Le Palais de Kami","La planète de Kaio","Le vaisseau de Freezer"], correct:"La Salle de l'Esprit et du Temps"},
+    {q:"Quel mentor, vivant sur une petite planète, enseigne à Goku la technique du Kaioken ?", options:["Kaio (le Roi des Mondes)","Kami","Maître Roshi","Guru"], correct:"Kaio (le Roi des Mondes)"},
+    {q:"Quel héros venu du futur, fils de Vegeta et Bulma, prévient les héros de l'arrivée des androïdes ?", options:["Trunks","Gohan","Goten","Gotenks"], correct:"Trunks"},
+    {q:"De quelle couleur sont les cheveux d'un personnage en transformation Super Saiyan de base ?", options:["Blonds (dorés)","Rouges","Bleus","Blancs"], correct:"Blonds (dorés)"},
+    {q:"Quel Saiyan légendaire, extrêmement puissant et incontrôlable, est le grand antagoniste de plusieurs films Dragon Ball ?", options:["Broly","Turles","Bojack","Cooler"], correct:"Broly"},
+    {q:"Sous l'emprise du sorcier Babidi, quel Saiyan se transforme en « Majin » avant l'arc Buu ?", options:["Vegeta","Goku","Gohan","Piccolo"], correct:"Vegeta"},
+    {q:"Quels deux personnages forment Vegetto grâce aux boucles d'oreilles Potara ?", options:["Goku et Vegeta","Goten et Trunks","Piccolo et Kami","Gohan et Piccolo"], correct:"Goku et Vegeta"}
+  ]},
+  culture: { label:"🌍 Culture générale", emoji:"🌍", questions:[
+    {q:"Quelle est la capitale du Cameroun ?", options:["Yaoundé","Douala","Bafoussam","Garoua"], correct:"Yaoundé"},
+    {q:"Quel est le plus long fleuve du monde ?", options:["Le Nil","L'Amazone","Le Congo","Le Niger"], correct:"Le Nil"},
+    {q:"Quelle est la monnaie officielle du Cameroun ?", options:["Le Franc CFA","Le Naira","Le Cedi","Le Dollar"], correct:"Le Franc CFA"},
+    {q:"Qui a peint la Joconde (Mona Lisa) ?", options:["Léonard de Vinci","Michel-Ange","Picasso","Raphaël"], correct:"Léonard de Vinci"},
+    {q:"Quel est le plus grand désert chaud du monde ?", options:["Le Sahara","Le Kalahari","Le désert de Gobi","Le désert du Namib"], correct:"Le Sahara"},
+    {q:"Combien de pays compte le continent africain ?", options:["54","48","62","45"], correct:"54"},
+    {q:"Quelle est la langue maternelle la plus parlée au monde ?", options:["Le mandarin","L'anglais","L'espagnol","Le français"], correct:"Le mandarin"},
+    {q:"En quelle année le Cameroun francophone a-t-il obtenu son indépendance ?", options:["1960","1958","1962","1957"], correct:"1960"},
+    {q:"Quel organe du corps humain pompe le sang ?", options:["Le cœur","Le foie","Le poumon","Le rein"], correct:"Le cœur"},
+    {q:"Quelle planète est surnommée la « planète rouge » ?", options:["Mars","Vénus","Jupiter","Mercure"], correct:"Mars"},
+    {q:"Quel est le plus haut sommet d'Afrique ?", options:["Le Kilimandjaro","Le Mont Cameroun","Le Mont Kenya","Les monts Atlas"], correct:"Le Kilimandjaro"},
+    {q:"Combien de jours la Terre met-elle environ à faire le tour du Soleil ?", options:["365 jours","360 jours","300 jours","400 jours"], correct:"365 jours"},
+    {q:"Quel est le plus grand océan du monde ?", options:["L'océan Pacifique","L'océan Atlantique","L'océan Indien","L'océan Arctique"], correct:"L'océan Pacifique"},
+    {q:"Quelle organisation régit le football mondial ?", options:["La FIFA","L'UEFA","Le CIO","La CAF"], correct:"La FIFA"},
+    {q:"Quel pays est surnommé « le pays du matin calme » ?", options:["La Corée","Le Japon","La Thaïlande","Le Népal"], correct:"La Corée"}
+  ]},
+  musique: { label:"🎵 Musique camerounaise", emoji:"🎵", questions:[
+    {q:"Quel saxophoniste camerounais est l'auteur du tube international « Soul Makossa » (1972) ?", options:["Manu Dibango","Richard Bona","Petit Pays","Sam Fan Thomas"], correct:"Manu Dibango"},
+    {q:"Dans quelle ville camerounaise le Makossa est-il né ?", options:["Douala","Yaoundé","Bafoussam","Bamenda"], correct:"Douala"},
+    {q:"Quel genre musical traditionnel, au rythme rapide, est associé au peuple Beti/Ewondo ?", options:["Le Bikutsi","Le Makossa","L'Assiko","Le Mangambeu"], correct:"Le Bikutsi"},
+    {q:"Quel groupe, connu pour peindre son visage, a révolutionné le bikutsi dans les années 1980 ?", options:["Les Têtes Brûlées","Les Golden Sounds","Zangalewa","Les Vétérans"], correct:"Les Têtes Brûlées"},
+    {q:"Quelle artiste est surnommée « la mère du bikutsi » ?", options:["K-Tino","Lady Ponce","Charlotte Dipanda","Coco Argentée"], correct:"K-Tino"},
+    {q:"Quelle chanteuse camerounaise est surnommée « la reine du bikutsi » ?", options:["Lady Ponce","K-Tino","Sista Becky","Daphné"], correct:"Lady Ponce"},
+    {q:"Quel bassiste camerounais virtuose est devenu une star internationale du jazz ?", options:["Richard Bona","Manu Dibango","Etienne Mbappé","André Manga"], correct:"Richard Bona"},
+    {q:"Quel chanteur de makossa est notamment connu pour son titre « Bijou » ?", options:["Petit Pays","Ben Decca","Ndedi Eyango","Longuè Longuè"], correct:"Petit Pays"},
+    {q:"Laquelle de ces artistes est une chanteuse camerounaise reconnue ?", options:["Charlotte Dipanda","Angélique Kidjo","Aya Nakamura","Fally Ipupa"], correct:"Charlotte Dipanda"},
+    {q:"Quel chanteur/producteur camerounais est notamment connu pour son titre « Konji » ?", options:["Locko","Salatiel","Franko","Mr Leo"], correct:"Locko"},
+    {q:"Quelle chanteuse camerounaise, révélée notamment via les réseaux sociaux, est connue pour son style afropop moderne ?", options:["Blanche Bailly","Daphné","Reniss","Numerica"], correct:"Blanche Bailly"},
+    {q:"Quel auteur-compositeur-producteur camerounais est notamment connu pour le titre « Coller la petite » ?", options:["Salatiel","Franko","Mink's","Stanley Enow"], correct:"Salatiel"},
+    {q:"De quelle langue vient le mot « makossa » ?", options:["Le duala","Le bassa","L'ewondo","Le bamiléké"], correct:"Le duala"},
+    {q:"Quel instrument est emblématique du Makossa, notamment via Manu Dibango ?", options:["Le saxophone","La guitare","Le tam-tam","Le balafon"], correct:"Le saxophone"},
+    {q:"Le Bikutsi est traditionnellement associé à quelle région/peuple du Cameroun ?", options:["Le peuple Beti (région du Centre)","Le peuple Bamiléké (Ouest)","Le peuple Sawa (Littoral)","Le peuple Peul (Nord)"], correct:"Le peuple Beti (région du Centre)"}
+  ]}
+};
+
+/* ============== JEUX DE PERSONNALITE ("QUEL X ES-TU ?") ============== */
+const PERSONALITY_QUIZZES = {
+  animal: {
+    label:"🦁 Quel animal es-tu ?", emoji:"🦁", note:"",
+    outcomes:{
+      lion:{title:"Le Lion", emoji:"🦁", desc:"Un leader né, courageux et protecteur. Quand il y a une décision à prendre, c'est toi qu'on regarde."},
+      renard:{title:"Le Renard", emoji:"🦊", desc:"Malin et débrouillard, tu trouves toujours une solution, même dans les situations les plus compliquées."},
+      tortue:{title:"La Tortue", emoji:"🐢", desc:"Calme, patient(e) et sage, tu avances lentement mais sûrement, sans jamais perdre le cap."},
+      aigle:{title:"L'Aigle", emoji:"🦅", desc:"Visionnaire et indépendant(e), tu prends de la hauteur pour voir ce que les autres ne voient pas."}
+    },
+    questions:[
+      {q:"Un ami a un gros problème et vient te voir en panique, tu...", options:[
+        {t:"Prends les choses en main tout de suite et organises la solution.", k:"lion"},
+        {t:"Trouves une astuce rapide et efficace, souvent inattendue.", k:"renard"},
+        {t:"L'écoutes calmement avant de réfléchir posément à la meilleure option.", k:"tortue"},
+        {t:"Prends du recul pour voir la situation dans son ensemble avant d'agir.", k:"aigle"}
+      ]},
+      {q:"Dans un groupe, on te décrit plutôt comme...", options:[
+        {t:"Celui/celle qui prend les décisions.", k:"lion"},
+        {t:"Celui/celle qui a toujours une bonne idée.", k:"renard"},
+        {t:"Celui/celle qui apaise les tensions.", k:"tortue"},
+        {t:"Celui/celle qui voit toujours plus loin que les autres.", k:"aigle"}
+      ]},
+      {q:"Face à un imprévu de dernière minute, tu...", options:[
+        {t:"Fonces et tu gères, sans paniquer.", k:"lion"},
+        {t:"Improvises une solution créative sur le moment.", k:"renard"},
+        {t:"Prends une grande respiration et avances étape par étape.", k:"tortue"},
+        {t:"Regardes la situation de haut pour repérer la meilleure sortie.", k:"aigle"}
+      ]},
+      {q:"Ton style pour atteindre un objectif ?", options:[
+        {t:"Foncer avec assurance, quitte à bousculer un peu.", k:"lion"},
+        {t:"Trouver le chemin le plus malin, pas forcément le plus direct.", k:"renard"},
+        {t:"Avancer petit à petit, sans jamais lâcher.", k:"tortue"},
+        {t:"Avoir une vision claire avant de se lancer.", k:"aigle"}
+      ]},
+      {q:"Ce qu'on apprécie le plus chez toi ?", options:[
+        {t:"Ton courage et ta capacité à protéger les tiens.", k:"lion"},
+        {t:"Ton intelligence et ton sens de la débrouille.", k:"renard"},
+        {t:"Ta patience et ta sagesse.", k:"tortue"},
+        {t:"Ta liberté d'esprit et ta vision unique.", k:"aigle"}
+      ]},
+      {q:"Le week-end, tu préfères...", options:[
+        {t:"Organiser une sortie de groupe et prendre les commandes.", k:"lion"},
+        {t:"Improviser un plan malin de dernière minute.", k:"renard"},
+        {t:"Te reposer tranquillement, sans pression.", k:"tortue"},
+        {t:"Partir explorer seul(e) ou en petit comité, loin de l'agitation.", k:"aigle"}
+      ]}
+    ]
+  },
+  repas: {
+    label:"🍲 Quel plat te correspond ?", emoji:"🍲", note:"",
+    outcomes:{
+      ndole:{title:"Le Ndolé", emoji:"🥘", desc:"Raffiné et généreux, tu aimes le travail bien fait et tu sais discrètement impressionner."},
+      dg:{title:"Le Poulet DG", emoji:"🍗", desc:"Festif et sociable, tu mets l'ambiance partout où tu passes et tu adores le plaisir partagé."},
+      eru:{title:"L'Eru", emoji:"🥬", desc:"Traditionnel et fidèle à tes racines, tu restes attaché(e) à ce qui compte vraiment."},
+      achu:{title:"L'Achu", emoji:"🍲", desc:"Chaleureux et rassembleur, tu adores réunir tout le monde autour d'une même table."}
+    },
+    questions:[
+      {q:"Pour toi, un bon repas c'est avant tout...", options:[
+        {t:"Un plat raffiné qui demande du savoir-faire et impressionne les invités.", k:"ndole"},
+        {t:"Une ambiance festive avec de la musique et plein de monde autour.", k:"dg"},
+        {t:"Un plat traditionnel, comme celui que préparait ta grand-mère.", k:"eru"},
+        {t:"Un grand plat partagé, où tout le monde pioche ensemble.", k:"achu"}
+      ]},
+      {q:"Quand tu reçois des invités chez toi, tu...", options:[
+        {t:"Prépares un plat qui sort de l'ordinaire, pour marquer les esprits.", k:"ndole"},
+        {t:"Mets l'ambiance, musique et bonne humeur garanties.", k:"dg"},
+        {t:"Restes fidèle aux recettes familiales, sans chercher à te réinventer.", k:"eru"},
+        {t:"Prévois large pour que tout le monde se sente chez lui.", k:"achu"}
+      ]},
+      {q:"Ton rapport à la tradition ?", options:[
+        {t:"Tu aimes revisiter les classiques avec une touche personnelle.", k:"ndole"},
+        {t:"Tu suis les tendances du moment, sans complexe.", k:"dg"},
+        {t:"Tu es très attaché(e) aux habitudes et aux racines familiales.", k:"eru"},
+        {t:"Pour toi, la tradition, c'est surtout un prétexte pour se retrouver.", k:"achu"}
+      ]},
+      {q:"Dans un mariage ou une grande fête, on te retrouve plutôt...", options:[
+        {t:"Près du buffet, en train d'apprécier les plats les plus travaillés.", k:"ndole"},
+        {t:"Sur la piste de danse, entouré(e) de monde.", k:"dg"},
+        {t:"En pleine discussion avec les anciens de la famille.", k:"eru"},
+        {t:"En train de veiller à ce que tout le monde ait de quoi manger.", k:"achu"}
+      ]},
+      {q:"Ce que tes proches disent de toi ?", options:[
+        {t:"Que tu as du goût et de l'exigence.", k:"ndole"},
+        {t:"Que tu sais mettre l'ambiance partout où tu passes.", k:"dg"},
+        {t:"Que tu es quelqu'un de fidèle et d'authentique.", k:"eru"},
+        {t:"Que tu es la personne qui rassemble tout le monde.", k:"achu"}
+      ]},
+      {q:"Ta boisson d'accompagnement préférée ?", options:[
+        {t:"Un bon vin ou une boisson raffinée.", k:"ndole"},
+        {t:"Une bière fraîche entre amis.", k:"dg"},
+        {t:"Un jus naturel, comme à la maison.", k:"eru"},
+        {t:"Peu importe, tant que c'est partagé à plusieurs.", k:"achu"}
+      ]}
+    ]
+  },
+  dragonball: {
+    label:"🐉 Quel personnage Dragon Ball es-tu ?", emoji:"🐉", note:"",
+    outcomes:{
+      goku:{title:"Goku", emoji:"🥋", desc:"Fonceur et passionné, tu adores te dépasser. Naïf parfois, mais toujours loyal envers les tiens."},
+      vegeta:{title:"Vegeta", emoji:"👑", desc:"Fier et ambitieux, tu veux toujours être le/la meilleur(e) et tu ne lâches jamais rien."},
+      piccolo:{title:"Piccolo", emoji:"🧘", desc:"Stratège et posé(e), tu réfléchis avant d'agir et tu sais guider les autres."},
+      krillin:{title:"Krillin", emoji:"💪", desc:"Loyal et courageux malgré la peur, tu gardes toujours les pieds sur terre pour aider les tiens."}
+    },
+    questions:[
+      {q:"Face à un adversaire clairement plus fort que toi, tu...", options:[
+        {t:"Es surtout excité(e) à l'idée de te dépasser et d'apprendre de lui.", k:"goku"},
+        {t:"Refuses d'admettre qu'il est meilleur et tu t'entraînes deux fois plus dur.", k:"vegeta"},
+        {t:"Observes et analyses ses points faibles avant d'agir.", k:"piccolo"},
+        {t:"As peur, mais tu restes quand même pour aider les tiens.", k:"krillin"}
+      ]},
+      {q:"Ta plus grande motivation dans la vie ?", options:[
+        {t:"Repousser toujours plus loin tes limites.", k:"goku"},
+        {t:"Prouver que tu es le/la meilleur(e).", k:"vegeta"},
+        {t:"Transmettre ce que tu sais et protéger ceux qui comptent.", k:"piccolo"},
+        {t:"Rester fidèle à tes proches, quoi qu'il arrive.", k:"krillin"}
+      ]},
+      {q:"Dans un groupe, ton rôle naturel ?", options:[
+        {t:"Le fonceur qui motive tout le monde à se surpasser.", k:"goku"},
+        {t:"Celui/celle qui pousse le groupe vers l'excellence, parfois sans ménagement.", k:"vegeta"},
+        {t:"Le sage qui donne les bons conseils au bon moment.", k:"piccolo"},
+        {t:"Le pilier discret, toujours là quand il faut.", k:"krillin"}
+      ]},
+      {q:"Comment gères-tu un échec ?", options:[
+        {t:"Tu en ris presque, ça te donne juste envie de retenter.", k:"goku"},
+        {t:"Tu le vis mal et tu redoubles d'efforts pour ne plus jamais le revivre.", k:"vegeta"},
+        {t:"Tu analyses calmement ce qui n'a pas marché.", k:"piccolo"},
+        {t:"Tu doutes un peu, mais tu ne baisses jamais les bras.", k:"krillin"}
+      ]},
+      {q:"Ce que les autres apprécient chez toi ?", options:[
+        {t:"Ta bonne humeur et ton énergie contagieuse.", k:"goku"},
+        {t:"Ta détermination et ton exigence.", k:"vegeta"},
+        {t:"Ta sagesse et ton calme en toute situation.", k:"piccolo"},
+        {t:"Ta loyauté et ton courage, même quand tu as peur.", k:"krillin"}
+      ]},
+      {q:"Ton style de combat, au sens propre comme au figuré ?", options:[
+        {t:"Foncer tête baissée, avec instinct et passion.", k:"goku"},
+        {t:"Une technique redoutable, affûtée par un entraînement acharné.", k:"vegeta"},
+        {t:"Une stratégie posée, pensée à l'avance.", k:"piccolo"},
+        {t:"Peu de force brute, mais un mental d'acier.", k:"krillin"}
+      ]}
+    ]
+  },
+  footballeur: {
+    label:"⚽ Quel joueur Barça/Real/PSG es-tu ?", emoji:"⚽", note:"",
+    outcomes:{
+      messi:{title:"Lionel Messi", emoji:"🇦🇷", desc:"Discret mais décisif, ton talent parle pour toi. Tu n'as pas besoin de faire du bruit pour marquer les esprits."},
+      ronaldo:{title:"Cristiano Ronaldo", emoji:"🇵🇹", desc:"Travailleur acharné et perfectionniste, tu veux être reconnu(e) comme le/la meilleur(e), point final."},
+      neymar:{title:"Neymar", emoji:"🇧🇷", desc:"Créatif et showman, tu aimes le spectacle, l'improvisation et faire rêver ceux qui te regardent."},
+      mbappe:{title:"Kylian Mbappé", emoji:"⚡", desc:"Jeune prodige rapide et ambitieux, tu vises déjà très haut et rien ne te fait peur."}
+    },
+    questions:[
+      {q:"En interview, tu serais plutôt du genre à...", options:[
+        {t:"Rester discret et laisser parler tes actes.", k:"messi"},
+        {t:"Affirmer sans détour que tu vises le sommet.", k:"ronaldo"},
+        {t:"Faire le show et surprendre tout le monde.", k:"neymar"},
+        {t:"Parler avec assurance de tes ambitions, sans complexe.", k:"mbappe"}
+      ]},
+      {q:"Ta méthode pour progresser ?", options:[
+        {t:"Un talent naturel poli par des heures de travail discret.", k:"messi"},
+        {t:"Une discipline de fer et un entraînement sans relâche.", k:"ronaldo"},
+        {t:"L'improvisation et la créativité avant tout.", k:"neymar"},
+        {t:"La vitesse d'exécution : apprendre vite et frapper fort.", k:"mbappe"}
+      ]},
+      {q:"Ce qui te définit le mieux ?", options:[
+        {t:"L'efficacité discrète : tu en fais beaucoup sans en avoir l'air.", k:"messi"},
+        {t:"L'ambition sans limite et la confiance en toi.", k:"ronaldo"},
+        {t:"Le sens du spectacle et l'envie de faire rêver.", k:"neymar"},
+        {t:"La précocité : tu vises déjà très haut, très tôt.", k:"mbappe"}
+      ]},
+      {q:"Face à la pression, tu...", options:[
+        {t:"Restes calme et livres quand même une performance décisive.", k:"messi"},
+        {t:"Te motives encore plus, la pression te rend meilleur(e).", k:"ronaldo"},
+        {t:"Cherches à transformer la pression en moment de spectacle.", k:"neymar"},
+        {t:"Fonces sans hésiter, la pression ne te freine pas.", k:"mbappe"}
+      ]},
+      {q:"On te complimente le plus souvent sur...", options:[
+        {t:"Ta simplicité malgré tes résultats impressionnants.", k:"messi"},
+        {t:"Ta détermination et ton mental de gagnant(e).", k:"ronaldo"},
+        {t:"Ta créativité et ton originalité.", k:"neymar"},
+        {t:"Ta rapidité à saisir les opportunités.", k:"mbappe"}
+      ]},
+      {q:"Ton objectif ultime ?", options:[
+        {t:"Être reconnu(e) comme une référence, sans avoir besoin de le crier.", k:"messi"},
+        {t:"Être considéré(e) comme le/la meilleur(e), un point c'est tout.", k:"ronaldo"},
+        {t:"Marquer les esprits et rester dans les mémoires.", k:"neymar"},
+        {t:"Aller toujours plus haut, toujours plus vite.", k:"mbappe"}
+      ]}
+    ]
+  },
+  mariage: {
+    label:"💍 À quel âge tu vas te marier ?", emoji:"💍", note:"Un jeu 100% pour rire, aucune boule de cristal n'a été utilisée 😄",
+    outcomes:{
+      avant25:{title:"Avant 25 ans", emoji:"💘", desc:"Le/la romantique pressé(e) : quand tu sais, tu sais, pas besoin d'attendre !"},
+      entre2530:{title:"Entre 25 et 30 ans", emoji:"⚖️", desc:"L'équilibré(e) : ni trop tôt, ni trop tard, tu prends les choses au bon rythme."},
+      entre3035:{title:"Entre 30 et 35 ans", emoji:"💼", desc:"Le/la carriériste épanoui(e) : d'abord les projets, l'amour suivra bien assez tôt."},
+      apres35:{title:"Après 35 ans (ou jamais, et c'est très bien comme ça)", emoji:"🕊️", desc:"L'esprit libre : le mariage, si ça arrive, ce sera à ta façon et à ton rythme."}
+    },
+    questions:[
+      {q:"Quand tu tombes amoureux/amoureuse, tu...", options:[
+        {t:"Fonces à fond, tout de suite.", k:"avant25"},
+        {t:"Avances sereinement, étape par étape.", k:"entre2530"},
+        {t:"Restes prudent(e), tu veux d'abord être stable.", k:"entre3035"},
+        {t:"Profites du moment présent sans te projeter.", k:"apres35"}
+      ]},
+      {q:"Ta vision du mariage ?", options:[
+        {t:"Une évidence quand on a trouvé la bonne personne.", k:"avant25"},
+        {t:"Une belle étape, à ne pas précipiter ni trop repousser.", k:"entre2530"},
+        {t:"Une décision importante, à prendre une fois bien installé(e) dans la vie.", k:"entre3035"},
+        {t:"Un joli concept, mais pas une priorité absolue.", k:"apres35"}
+      ]},
+      {q:"Tu rêves plutôt de...", options:[
+        {t:"Construire une famille et une maison bien à toi.", k:"avant25"},
+        {t:"Un bel équilibre entre couple, amis et travail.", k:"entre2530"},
+        {t:"Réussir ta carrière avant de penser à autre chose.", k:"entre3035"},
+        {t:"Voyager et vivre mille vies avant de te poser.", k:"apres35"}
+      ]},
+      {q:"Ce que tes proches disent de ta vie sentimentale ?", options:[
+        {t:"Que tu es le/la plus romantique de la famille.", k:"avant25"},
+        {t:"Que tu prends les choses sérieusement, sans te presser.", k:"entre2530"},
+        {t:"Que tu es concentré(e) sur tes objectifs en ce moment.", k:"entre3035"},
+        {t:"Que tu es imprévisible et libre comme l'air.", k:"apres35"}
+      ]},
+      {q:"Ta priorité budget du moment ?", options:[
+        {t:"Économiser pour un bel avenir à deux.", k:"avant25"},
+        {t:"Un peu de tout : sorties, projets, épargne.", k:"entre2530"},
+        {t:"Investir dans ta carrière et tes projets perso.", k:"entre3035"},
+        {t:"Voyager et profiter, le reste attendra.", k:"apres35"}
+      ]},
+      {q:"Si on te demandait en mariage demain, tu...", options:[
+        {t:"Dirais oui sans hésiter une seconde.", k:"avant25"},
+        {t:"Dirais oui, si le moment est vraiment le bon.", k:"entre2530"},
+        {t:"Demanderais un peu de temps pour y réfléchir sereinement.", k:"entre3035"},
+        {t:"Rigolerais en disant 'on a le temps !'", k:"apres35"}
+      ]}
+    ]
+  },
+  compatibilite: {
+    label:"💞 Qui te convient ?", emoji:"💞", note:"Un jeu pour rire, pas une vraie étude de compatibilité 😄",
+    outcomes:{
+      calme:{title:"Le/la calme et posé(e)", emoji:"🌿", desc:"Il te faut quelqu'un qui t'apporte équilibre et sérénité au quotidien."},
+      aventurier:{title:"L'aventurier(ère)", emoji:"🧭", desc:"Il te faut quelqu'un qui te pousse à sortir de ta zone de confort."},
+      fonceur:{title:"Le/la fonceur(se) ambitieux(se)", emoji:"🚀", desc:"Il te faut un binôme aussi déterminé(e) que toi, qui vise haut lui/elle aussi."},
+      comique:{title:"Le/la comique", emoji:"😂", desc:"Il te faut quelqu'un qui te fait rire à chaque instant, même dans les galères."}
+    },
+    questions:[
+      {q:"Ton rendez-vous idéal ?", options:[
+        {t:"Une soirée tranquille, à discuter autour d'un bon repas.", k:"calme"},
+        {t:"Une sortie improvisée vers un endroit que tu ne connais pas.", k:"aventurier"},
+        {t:"Une activité qui vous pousse tous les deux à vous dépasser.", k:"fonceur"},
+        {t:"N'importe quoi, tant que ça finit en fou rire.", k:"comique"}
+      ]},
+      {q:"Ce qui te manque le plus chez un(e) partenaire ?", options:[
+        {t:"De la stabilité et de la douceur au quotidien.", k:"calme"},
+        {t:"De la spontanéité et l'envie de découvrir.", k:"aventurier"},
+        {t:"De l'ambition et des objectifs communs.", k:"fonceur"},
+        {t:"De l'humour, surtout dans les moments difficiles.", k:"comique"}
+      ]},
+      {q:"En couple, tu es plutôt...", options:[
+        {t:"Le calme qui apaise l'autre.", k:"calme"},
+        {t:"Celui/celle qui propose toujours un nouveau plan.", k:"aventurier"},
+        {t:"Le moteur qui pousse les deux à avancer.", k:"fonceur"},
+        {t:"Celui/celle qui détend l'atmosphère par l'humour.", k:"comique"}
+      ]},
+      {q:"Ta plus grande peur en couple ?", options:[
+        {t:"Le chaos et l'instabilité.", k:"calme"},
+        {t:"La routine et l'ennui.", k:"aventurier"},
+        {t:"Stagner et ne plus progresser ensemble.", k:"fonceur"},
+        {t:"Une ambiance trop sérieuse, sans légèreté.", k:"comique"}
+      ]},
+      {q:"Un bon souvenir en couple, pour toi, c'est...", options:[
+        {t:"Une soirée simple, juste tous les deux.", k:"calme"},
+        {t:"Un voyage ou une expérience inattendue.", k:"aventurier"},
+        {t:"Un objectif atteint ensemble.", k:"fonceur"},
+        {t:"Un fou rire mémorable.", k:"comique"}
+      ]},
+      {q:"Ce que tes amis diraient de ton/ta partenaire idéal(e) ?", options:[
+        {t:"'Il/elle te pose, ça te fait du bien.'", k:"calme"},
+        {t:"'Avec lui/elle, tu ne t'ennuies jamais.'", k:"aventurier"},
+        {t:"'Vous vous tirez vers le haut tous les deux.'", k:"fonceur"},
+        {t:"'On ne s'ennuie jamais avec vous deux, c'est un duo comique.'", k:"comique"}
+      ]}
+    ]
+  }
+};
+
+const DEFAULT_PLAYERS = ["Jopa","Majes","Thurell","Bambi"];
+
+/* ============== UTILS ============== */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function todayStr(){
+  const d = new Date();
+  return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+const el = document.getElementById("app-card");
+const topbarEl = document.getElementById("topbar");
+
+/* ============== ETAT LOCAL ============== */
+let myName = localStorage.getItem("qf_playerName") || null;
+let currentActiveGame = null;
+let quizState = null; // {activeGame, qIndex, answers}
+let persoState = null; // {activeGame, qIndex, tally}
+let liveResultsUnsub = null;
+let db, auth;
+
+/* ============== DEMARRAGE / FIREBASE ============== */
+function isConfigMissing(){
+  return !firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf("COLLE_ICI") !== -1;
+}
+
+function boot(){
+  if(isConfigMissing()){
+    renderSetupNeeded();
+    return;
+  }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+  }catch(e){
+    renderFatalError(e);
+    return;
+  }
+  renderConnecting();
+  auth.onAuthStateChanged(user=>{
+    if(user){
+      startApp();
+    }
+  });
+  auth.signInAnonymously().catch(err=>{
+    renderFatalError(err);
+  });
+}
+
+function renderSetupNeeded(){
+  topbarEl.classList.add("hidden");
+  el.innerHTML = `
+    <div class="intro-avatar">🛠️</div>
+    <h1>Configuration requise</h1>
+    <p class="subtitle">Ce fichier n'est pas encore relié à ta base de données en ligne.</p>
+    <p class="small-note" style="text-align:left;line-height:1.6;">
+      Ouvre <strong>index.html</strong> avec un éditeur de texte, repère le bloc <code>firebaseConfig</code>
+      tout en haut du script, et remplace les valeurs par celles de ton projet Firebase.
+      Le guide complet se trouve dans <strong>SETUP_INSTRUCTIONS.md</strong>.
+    </p>
+  `;
+}
+
+function renderConnecting(){
+  topbarEl.classList.add("hidden");
+  el.innerHTML = `<div class="spinner"></div><p class="subtitle">Connexion en cours...</p>`;
+}
+
+function renderFatalError(e){
+  topbarEl.classList.add("hidden");
+  el.innerHTML = `
+    <div class="intro-avatar">⚠️</div>
+    <h1>Oups, connexion impossible</h1>
+    <p class="subtitle">${(e && e.message) ? e.message : "Erreur inconnue"}</p>
+    <p class="small-note">Vérifie ta configuration Firebase (clé API, projet) et ta connexion internet.</p>
+  `;
+}
+
+function startApp(){
+  if(!myName){
+    renderNamePicker();
+  } else {
+    attachTopbar();
+    attachStateListener();
+  }
+}
+
+function attachTopbar(){
+  topbarEl.classList.remove("hidden");
+  topbarEl.innerHTML = `
+    <div class="me">
+      <div class="avatar">${avatarFor(myName)}</div>
+      <span>${myName}</span>
+    </div>
+    <div style="display:flex; gap:6px;">
+      <button id="tb-history" title="Historique">📊</button>
+      <button id="tb-admin" title="Mode admin">⚙️</button>
+      <button id="tb-switch" title="Changer de joueur">🔁</button>
+    </div>
+  `;
+  document.getElementById("tb-history").addEventListener("click", renderHistoryScreen);
+  document.getElementById("tb-admin").addEventListener("click", renderAdminPinGate);
+  document.getElementById("tb-switch").addEventListener("click", ()=>{
+    localStorage.removeItem("qf_playerName");
+    myName = null;
+    renderNamePicker();
+  });
+}
+
+/* ============== ECRAN : CHOIX DU JOUEUR ============== */
+function renderNamePicker(){
+  topbarEl.classList.add("hidden");
+  el.innerHTML = `
+    <div class="intro-avatar">👋</div>
+    <h1>Bienvenue !</h1>
+    <p class="subtitle">Qui es-tu ?</p>
+    <div class="name-grid" id="name-grid">
+      ${DEFAULT_PLAYERS.map(p=>`<div class="name-btn" data-name="${p}"><span class="emoji">${avatarFor(p)}</span>${p}</div>`).join('')}
+    </div>
+    <label>Ou un autre prénom</label>
+    <input type="text" id="custom-name" placeholder="Ton prénom">
+    <button class="btn btn-primary" id="confirm-name-btn">Continuer ▶️</button>
+  `;
+  let selected = null;
+  document.querySelectorAll(".name-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".name-btn").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selected = btn.dataset.name;
+      document.getElementById("custom-name").value = "";
+    });
+  });
+  document.getElementById("custom-name").addEventListener("input", e=>{
+    if(e.target.value.trim()){
+      document.querySelectorAll(".name-btn").forEach(b=>b.classList.remove("selected"));
+      selected = null;
+    }
+  });
+  document.getElementById("confirm-name-btn").addEventListener("click", ()=>{
+    const custom = document.getElementById("custom-name").value.trim();
+    const name = custom || selected;
+    if(!name){ alert("Choisis ou écris un prénom."); return; }
+    myName = name;
+    localStorage.setItem("qf_playerName", name);
+    attachTopbar();
+    attachStateListener();
+  });
+}
+
+/* ============== ECOUTE DE L'ETAT GLOBAL (TEMPS REEL) ============== */
+function attachStateListener(){
+  db.collection("meta").doc("state").onSnapshot(doc=>{
+    const data = doc.exists ? doc.data() : {activeGame:null};
+    handleActiveGame(data.activeGame || null);
+  }, err=>{
+    renderFatalError(err);
+  });
+}
+
+function handleActiveGame(activeGame){
+  currentActiveGame = activeGame;
+  if(liveResultsUnsub){ liveResultsUnsub(); liveResultsUnsub = null; }
+  if(!activeGame){
+    renderWaiting();
+    return;
+  }
+  const resultId = activeGame.id + "_" + myName;
+  db.collection("liveResults").doc(resultId).get().then(snap=>{
+    if(snap.exists){
+      renderGameResults(activeGame, snap.data());
+    } else {
+      renderGameIntro(activeGame);
+    }
+  });
+}
+
+/* ============== ECRAN : ATTENTE ============== */
+function renderWaiting(){
+  el.innerHTML = `
+    <div class="intro-avatar">⏳</div>
+    <div class="intro-name">C'est calme par ici...</div>
+    <p class="subtitle">Jopa vous enverra un nouveau jeu prochainement 🎮</p>
+    <button class="btn btn-secondary" id="see-history-btn">📊 Voir le classement & l'historique</button>
+  `;
+  document.getElementById("see-history-btn").addEventListener("click", renderHistoryScreen);
+}
+
+/* ============== ECRAN : INTRO D'UN JEU ACTIF ============== */
+function renderGameIntro(activeGame){
+  if(activeGame.mode === "quiz"){
+    const theme = THEMES[activeGame.key];
+    el.innerHTML = `
+      <div class="intro-avatar">${theme.emoji}</div>
+      <div class="intro-name">Nouveau quiz !</div>
+      <p class="subtitle">${theme.label}</p>
+      <div class="intro-hint">10 questions · ${activeGame.chrono} secondes par question</div>
+      <div class="intro-hint">Reste seul(e) face à ton écran, sans aide extérieure 🙈</div>
+      <button class="btn btn-primary" id="ready-btn">${myName}, je suis prêt(e) ▶️</button>
+    `;
+    document.getElementById("ready-btn").addEventListener("click", ()=>{
+      quizState = {activeGame, qIndex:0, answers:[]};
+      renderQuizQuestion();
+    });
+  } else {
+    const pq = PERSONALITY_QUIZZES[activeGame.key];
+    el.innerHTML = `
+      <div class="intro-avatar">${pq.emoji}</div>
+      <div class="intro-name">${pq.label}</div>
+      <div class="intro-hint">${pq.questions.length} questions · réponds avec ce qui te ressemble le plus</div>
+      ${pq.note ? `<div class="intro-hint">${pq.note}</div>` : ''}
+      <button class="btn btn-primary" id="ready-btn">${myName}, je suis prêt(e) ▶️</button>
+    `;
+    document.getElementById("ready-btn").addEventListener("click", ()=>{
+      persoState = {activeGame, qIndex:0, tally:{}};
+      renderPersoQuestion();
+    });
+  }
+}
+
+/* ============== QUIZ CULTURE : QUESTION + CHRONO ============== */
+function renderQuizQuestion(){
+  clearInterval(quizState.timerId);
+  const { activeGame } = quizState;
+  const total = activeGame.questions.length;
+  const item = activeGame.questions[quizState.qIndex];
+  quizState.timeLeft = activeGame.chrono;
+
+  el.innerHTML = `
+    <div class="quiz-top">
+      <span class="quiz-progress">Question ${quizState.qIndex+1} / ${total}</span>
+      <span class="timer-badge" id="timer-badge">${quizState.timeLeft}s</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:100%"></div></div>
+    <div class="question-text">${item.q}</div>
+    <div class="options" id="options-wrap">
+      ${item.options.map(opt=>`<button class="option" data-val="${encodeURIComponent(opt)}">${opt}</button>`).join('')}
+    </div>
+  `;
+
+  const badge = document.getElementById("timer-badge");
+  const fill = document.getElementById("progress-fill");
+
+  document.querySelectorAll(".option").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      lockQuizAnswer(decodeURIComponent(btn.dataset.val));
+    });
+  });
+
+  quizState.timerId = setInterval(()=>{
+    quizState.timeLeft--;
+    badge.textContent = quizState.timeLeft + "s";
+    fill.style.width = (quizState.timeLeft/activeGame.chrono*100) + "%";
+    if(quizState.timeLeft <= 5) badge.classList.add("warn");
+    if(quizState.timeLeft <= 0){ lockQuizAnswer(null); }
+  }, 1000);
+}
+
+function lockQuizAnswer(chosenVal){
+  clearInterval(quizState.timerId);
+  const { activeGame } = quizState;
+  const item = activeGame.questions[quizState.qIndex];
+  const isCorrect = chosenVal === item.correct;
+  quizState.answers.push({isCorrect});
+
+  document.querySelectorAll(".option").forEach(btn=>{
+    const val = decodeURIComponent(btn.dataset.val);
+    btn.classList.add("disabled");
+    if(val === item.correct) btn.classList.add("correct");
+    else if(val === chosenVal) btn.classList.add("wrong");
+  });
+
+  setTimeout(()=>{
+    if(quizState.qIndex + 1 < activeGame.questions.length){
+      quizState.qIndex++;
+      renderQuizQuestion();
+    } else {
+      finishQuiz();
+    }
+  }, 900);
+}
+
+function finishQuiz(){
+  const { activeGame, answers } = quizState;
+  const score = answers.filter(a=>a.isCorrect).length;
+  el.innerHTML = `<div class="spinner"></div><p class="subtitle">Envoi de ton score...</p>`;
+  const resultId = activeGame.id + "_" + myName;
+  db.collection("liveResults").doc(resultId).set({
+    gameId: activeGame.id, mode:"quiz", key:activeGame.key, player: myName, score: score,
+    finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>{
+    renderGameResults(activeGame, {score});
+  });
+}
+
+/* ============== JEUX PERSO : QUESTION (SANS CHRONO) ============== */
+function renderPersoQuestion(){
+  const { activeGame } = persoState;
+  const pq = PERSONALITY_QUIZZES[activeGame.key];
+  const total = pq.questions.length;
+  const item = pq.questions[persoState.qIndex];
+  const shuffledOptions = shuffle(item.options);
+
+  el.innerHTML = `
+    <div class="quiz-top">
+      <span class="quiz-progress">Question ${persoState.qIndex+1} / ${total}</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(persoState.qIndex/total*100)}%"></div></div>
+    <div class="question-text">${item.q}</div>
+    <div class="options">
+      ${shuffledOptions.map(o=>`<button class="option" data-k="${o.k}">${o.t}</button>`).join('')}
+    </div>
+  `;
+
+  document.querySelectorAll(".option").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const k = btn.dataset.k;
+      persoState.tally[k] = (persoState.tally[k] || 0) + 1;
+      if(persoState.qIndex + 1 < total){
+        persoState.qIndex++;
+        renderPersoQuestion();
+      } else {
+        finishPerso();
+      }
+    });
+  });
+}
+
+function finishPerso(){
+  const { activeGame, tally } = persoState;
+  let bestKey = null, bestCount = -1;
+  Object.entries(tally).forEach(([k,c])=>{ if(c > bestCount){ bestCount = c; bestKey = k; } });
+  el.innerHTML = `<div class="spinner"></div><p class="subtitle">Calcul de ton profil...</p>`;
+  const resultId = activeGame.id + "_" + myName;
+  db.collection("liveResults").doc(resultId).set({
+    gameId: activeGame.id, mode:"perso", key:activeGame.key, player: myName, outcomeKey: bestKey,
+    finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>{
+    renderGameResults(activeGame, {outcomeKey: bestKey});
+  });
+}
+
+/* ============== ECRAN : RESULTATS (LIVE) ============== */
+function renderGameResults(activeGame, myResult){
+  if(activeGame.mode === "quiz"){
+    renderQuizResults(activeGame, myResult);
+  } else {
+    renderPersoResult(activeGame, myResult);
+  }
+}
+
+function renderQuizResults(activeGame, myResult){
+  const theme = THEMES[activeGame.key];
+  el.innerHTML = `
+    <h1>🏆 ${theme.label}</h1>
+    <p class="subtitle">Ton score : <strong>${myResult.score} / 10</strong></p>
+    <div class="section-title">Classement du jeu (en direct)</div>
+    <div id="live-rank"><div class="spinner"></div></div>
+    <div class="section-title">Classement général de la saison</div>
+    <div id="season-rank"><div class="spinner"></div></div>
+  `;
+
+  if(liveResultsUnsub){ liveResultsUnsub(); }
+  liveResultsUnsub = db.collection("liveResults").where("gameId","==",activeGame.id)
+    .onSnapshot(snap=>{
+      const rows = [];
+      snap.forEach(doc=> rows.push(doc.data()));
+      rows.sort((a,b)=> b.score - a.score);
+      const medals = ["🥇","🥈","🥉"];
+      const maxScore = 10;
+      document.getElementById("live-rank").innerHTML = rows.map((r,i)=>`
+        <div class="rank-row ${i===0?'top1':''} ${r.player===myName?'me':''}">
+          <div class="rank-bar" style="width:${(r.score/maxScore*100)}%"></div>
+          <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
+          <div class="rank-name">${avatarFor(r.player)} ${r.player}</div>
+          <div class="rank-score">${r.score}/10</div>
+        </div>
+      `).join('') || `<p class="small-note">En attente des autres joueurs...</p>`;
+    });
+
+  db.collection("meta").doc("season").onSnapshot(doc=>{
+    const season = doc.exists ? doc.data() : {totals:{}};
+    const ranking = Object.entries(season.totals || {}).sort((a,b)=>b[1].points-a[1].points);
+    const medals = ["🥇","🥈","🥉"];
+    document.getElementById("season-rank").innerHTML = ranking.length ? ranking.map(([name,d],i)=>`
+      <div class="rank-row ${name===myName?'me':''}">
+        <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
+        <div class="rank-name">${avatarFor(name)} ${name} <span style="color:#94a3b8;font-weight:500;">(${d.games} quiz)</span></div>
+        <div class="rank-score">${d.points} pts</div>
+      </div>
+    `).join('') : `<p class="small-note">Premier quiz de la saison !</p>`;
+  });
+}
+
+function renderPersoResult(activeGame, myResult){
+  const pq = PERSONALITY_QUIZZES[activeGame.key];
+  const outcome = pq.outcomes[myResult.outcomeKey];
+  el.innerHTML = `
+    <div class="intro-avatar" style="font-size:4rem;">${outcome.emoji}</div>
+    <div class="intro-hint" style="font-size:1.1rem;">${myName}, tu es...</div>
+    <div class="intro-name" style="color:#b45309;">${outcome.title}</div>
+    <p class="subtitle" style="margin-top:10px;">${outcome.desc}</p>
+    <p class="small-note">Ce jeu n'a pas de classement, juste pour le fun 🎉 Le résultat est gardé dans l'historique.</p>
+  `;
+}
+
+/* ============== ECRAN : HISTORIQUE (ACCESSIBLE A TOUS) ============== */
+function renderHistoryScreen(){
+  el.innerHTML = `<div class="spinner"></div><p class="subtitle">Chargement de l'historique...</p>`;
+  Promise.all([
+    db.collection("meta").doc("season").get(),
+    db.collection("history").orderBy("createdAt","desc").limit(15).get().catch(()=> db.collection("history").limit(15).get())
+  ]).then(([seasonSnap, histSnap])=>{
+    const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
+    const ranking = Object.entries(season.totals || {}).sort((a,b)=>b[1].points-a[1].points);
+    const medals = ["🥇","🥈","🥉"];
+    const historyItems = [];
+    histSnap.forEach(doc=> historyItems.push(doc.data()));
+
+    el.innerHTML = `
+      <h1>📊 Classement & historique</h1>
+      <div class="section-title">Classement général de la saison (Quiz Culture)</div>
+      ${ranking.length ? ranking.map(([name,d],i)=>`
+        <div class="rank-row ${i===0?'top1':''}">
+          <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
+          <div class="rank-name">${avatarFor(name)} ${name} <span style="color:#94a3b8;font-weight:500;">(${d.games} quiz)</span></div>
+          <div class="rank-score">${d.points} pts</div>
+        </div>
+      `).join('') : `<p class="small-note">Pas encore de quiz joué.</p>`}
+
+      <div class="section-title">Historique des jeux</div>
+      ${historyItems.length ? historyItems.map(h=>{
+        const isQuiz = h.mode === "quiz";
+        const label = isQuiz ? (THEMES[h.key] ? THEMES[h.key].label : h.key) : (PERSONALITY_QUIZZES[h.key] ? PERSONALITY_QUIZZES[h.key].label : h.key);
+        const resultsTxt = Object.entries(h.results || {}).map(([n,v])=>{
+          if(isQuiz) return `${n}: ${v}/10`;
+          const pq = PERSONALITY_QUIZZES[h.key];
+          const o = pq && pq.outcomes[v];
+          return `${n}: ${o ? o.title : v}`;
+        }).join(' · ');
+        return `
+          <div class="rank-row" style="flex-direction:column; align-items:flex-start;">
+            <strong>${h.date || ''} · ${label}</strong>
+            <span style="color:#64748b;font-size:.85rem;">${resultsTxt}</span>
+          </div>
+        `;
+      }).join('') : `<p class="small-note">Pas encore d'historique.</p>`}
+
+      <button class="btn btn-primary" id="back-btn">Retour</button>
+    `;
+    document.getElementById("back-btn").addEventListener("click", ()=>{
+      handleActiveGame(currentActiveGame);
+    });
+  });
+}
+
+/* ============================================================
+   MODE ADMIN (reserve a Jopa)
+   ============================================================ */
+function renderAdminPinGate(){
+  el.innerHTML = `
+    <div class="intro-avatar">🔒</div>
+    <div class="intro-name">Mode Admin</div>
+    <div class="intro-hint">Entre le code pour choisir le jeu de la semaine</div>
+    <input type="password" id="pin-input" class="pin-input" inputmode="numeric" maxlength="8" placeholder="••••">
+    <div class="pin-error" id="pin-error"></div>
+    <button class="btn btn-primary" id="unlock-btn">Déverrouiller</button>
+    <button class="btn-link" id="cancel-btn" type="button">Annuler</button>
+  `;
+  const input = document.getElementById("pin-input");
+  const tryUnlock = ()=>{
+    if(input.value === PIN_CODE){ renderAdminDashboard(); }
+    else {
+      document.getElementById("pin-error").textContent = "Code incorrect.";
+      input.value = ""; input.focus();
+    }
+  };
+  document.getElementById("unlock-btn").addEventListener("click", tryUnlock);
+  input.addEventListener("keydown", e=>{ if(e.key === "Enter") tryUnlock(); });
+  document.getElementById("cancel-btn").addEventListener("click", ()=> handleActiveGame(currentActiveGame));
+  input.focus();
+}
+
+function renderAdminDashboard(){
+  el.innerHTML = `<div class="spinner"></div>`;
+  db.collection("meta").doc("state").get().then(doc=>{
+    const activeGame = doc.exists ? (doc.data().activeGame || null) : null;
+    renderAdminDashboardWith(activeGame);
+  });
+}
+
+function renderAdminDashboardWith(activeGame){
+  let statusHTML = "";
+  if(activeGame){
+    const label = activeGame.mode === "quiz" ? THEMES[activeGame.key].label : PERSONALITY_QUIZZES[activeGame.key].label;
+    statusHTML = `
+      <div class="rank-row" style="flex-direction:column; align-items:flex-start;">
+        <strong>Jeu en cours : ${label}</strong>
+        <span style="color:#64748b;font-size:.85rem;" id="admin-live-count">Chargement des réponses...</span>
+      </div>
+      <button class="btn btn-danger" id="end-game-btn" type="button">Terminer ce jeu</button>
+    `;
+  } else {
+    statusHTML = `<p class="small-note">Aucun jeu actif en ce moment.</p>`;
+  }
+
+  el.innerHTML = `
+    <h1>⚙️ Tableau de bord admin</h1>
+    <p class="subtitle">Choisis le jeu de la semaine</p>
+
+    ${statusHTML}
+
+    <div class="section-title">Quiz Culture (chrono)</div>
+    <div class="theme-grid" id="admin-quiz-grid">
+      ${Object.entries(THEMES).map(([key,t])=>`<div class="theme-btn" data-mode="quiz" data-key="${key}">${t.emoji}<br>${t.label.replace(/^\S+\s/,'')}</div>`).join('')}
+    </div>
+    <label>Temps par question</label>
+    <select id="chrono-select">
+      <option value="15">15 secondes</option>
+      <option value="20" selected>20 secondes</option>
+      <option value="25">25 secondes</option>
+      <option value="30">30 secondes</option>
+    </select>
+
+    <div class="section-title">Jeux de personnalité (sans chrono)</div>
+    <div class="theme-grid" id="admin-perso-grid">
+      ${Object.entries(PERSONALITY_QUIZZES).map(([key,pq])=>`<div class="theme-btn" data-mode="perso" data-key="${key}">${pq.emoji}<br>${pq.label.replace(/^\S+\s/,'')}</div>`).join('')}
+    </div>
+
+    <button class="btn btn-primary" id="launch-btn" disabled>Choisis un jeu pour lancer</button>
+    <button class="btn-link" id="back-btn" type="button">← Retour</button>
+  `;
+
+  let selectedMode = null, selectedKey = null;
+  document.querySelectorAll("#admin-quiz-grid .theme-btn, #admin-perso-grid .theme-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll("#admin-quiz-grid .theme-btn, #admin-perso-grid .theme-btn").forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedMode = btn.dataset.mode;
+      selectedKey = btn.dataset.key;
+      const launchBtn = document.getElementById("launch-btn");
+      launchBtn.disabled = false;
+      launchBtn.textContent = "🚀 Lancer ce jeu pour tout le monde";
+    });
+  });
+
+  document.getElementById("launch-btn").addEventListener("click", ()=>{
+    if(!selectedMode) return;
+    launchGame(selectedMode, selectedKey, document.getElementById("chrono-select").value);
+  });
+
+  document.getElementById("back-btn").addEventListener("click", ()=> handleActiveGame(currentActiveGame));
+
+  const endBtn = document.getElementById("end-game-btn");
+  if(endBtn) endBtn.addEventListener("click", endGame);
+
+  if(activeGame){
+    db.collection("liveResults").where("gameId","==",activeGame.id).onSnapshot(snap=>{
+      const el2 = document.getElementById("admin-live-count");
+      if(el2) el2.textContent = snap.size + " joueur(s) ont déjà répondu";
+    });
+  }
+}
+
+function launchGame(mode, key, chronoValue){
+  const finish = (activeGame)=>{
+    db.collection("meta").doc("state").set({activeGame}).then(()=>{
+      renderAdminDashboardWith(activeGame);
+    });
+  };
+  if(mode === "quiz"){
+    const bank = shuffle(THEMES[key].questions).slice(0,10).map(item=>({
+      q:item.q, options:shuffle(item.options), correct:item.correct
+    }));
+    finish({ id:"g_"+Date.now(), mode:"quiz", key, chrono: parseInt(chronoValue,10), questions: bank, startedAt: Date.now() });
+  } else {
+    finish({ id:"g_"+Date.now(), mode:"perso", key, startedAt: Date.now() });
+  }
+}
+
+function endGame(){
+  if(!confirm("Terminer ce jeu et afficher le message d'attente à tout le monde ?")) return;
+  db.collection("meta").doc("state").get().then(doc=>{
+    const activeGame = doc.exists ? (doc.data().activeGame || null) : null;
+    if(!activeGame){ renderAdminDashboardWith(null); return; }
+    db.collection("liveResults").where("gameId","==",activeGame.id).get().then(snap=>{
+      const results = {};
+      snap.forEach(d=>{
+        const data = d.data();
+        results[data.player] = data.mode === "quiz" ? data.score : data.outcomeKey;
+      });
+      const histDoc = {
+        mode: activeGame.mode, key: activeGame.key, date: todayStr(),
+        results, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      const tasks = [db.collection("history").add(histDoc)];
+      if(activeGame.mode === "quiz"){
+        tasks.push(db.collection("meta").doc("season").get().then(seasonSnap=>{
+          const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
+          if(!season.totals) season.totals = {};
+          Object.entries(results).forEach(([name,score])=>{
+            if(!season.totals[name]) season.totals[name] = {points:0, games:0};
+            season.totals[name].points += score;
+            season.totals[name].games += 1;
+          });
+          return db.collection("meta").doc("season").set(season);
+        }));
+      }
+      Promise.all(tasks).then(()=>{
+        db.collection("meta").doc("state").set({activeGame:null}).then(()=>{
+          renderAdminDashboardWith(null);
+        });
+      });
+    });
+  });
+}
+
+/* ============== DEMARRAGE ============== */
+boot();
+</script>
+</body>
+</html>
