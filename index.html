@@ -150,6 +150,18 @@
   .pin-input{text-align:center; font-size:1.6rem; letter-spacing:.4em; margin-top:14px;}
   .pin-error{color:#b91c1c; text-align:center; margin-top:10px; font-size:.85rem; min-height:1em;}
   .badge{display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; background:#eef2ff; color:#3730a3; margin-left:6px;}
+  .kpi-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px;}
+  .kpi-card{background:#f8fafc; border-radius:14px; padding:14px 14px; border:1.5px solid #e2e8f0;}
+  .kpi-value{font-size:1.35rem; font-weight:800; color:#1e1b4b; line-height:1.2;}
+  .kpi-label{font-size:.76rem; color:#64748b; margin-top:2px;}
+  .player-stat-card{background:#f8fafc; border-radius:14px; padding:14px 16px; margin-bottom:8px; border:1.5px solid #e2e8f0;}
+  .player-stat-head{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+  .player-stat-head .name{font-weight:800; flex:1;}
+  .player-stat-metrics{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; font-size:.78rem; color:#64748b; text-align:center;}
+  .player-stat-metrics b{display:block; font-size:1rem; color:#1e1b4b;}
+  .trend-up{color:#16a34a; font-weight:800;}
+  .trend-down{color:#dc2626; font-weight:800;}
+  .trend-flat{color:#94a3b8; font-weight:800;}
   .spinner{width:34px; height:34px; border:4px solid #e2e8f0; border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin:20px auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
 </style>
@@ -377,7 +389,8 @@ function colorFor(key){
   const colors = {
     football:"#16a34a", dragonball:"#f97316", culture:"#0ea5e9", musique:"#ec4899",
     ecole_champions:"#eab308", olive_tom:"#22c55e", agriculture:"#65a30d", sciences_tech:"#6366f1", nature:"#059669",
-    animal:"#f59e0b", repas:"#ef4444", footballeur:"#3b82f6", mariage:"#ec4899", compatibilite:"#a855f7"
+    animal:"#f59e0b", repas:"#ef4444", footballeur:"#3b82f6", mariage:"#ec4899", compatibilite:"#a855f7",
+    voyageur:"#0891b2", superhero:"#dc2626", whatsapp:"#16a34a"
   };
   return colors[key] || "#94a3b8";
 }
@@ -663,6 +676,147 @@ const PERSONALITY_QUIZZES = {
         {t:"'Avec lui/elle, tu ne t'ennuies jamais.'", k:"aventurier"},
         {t:"'Vous vous tirez vers le haut tous les deux.'", k:"fonceur"},
         {t:"'On ne s'ennuie jamais avec vous deux, c'est un duo comique.'", k:"comique"}
+      ]}
+    ]
+  },
+  voyageur: {
+    label:"🎒 Quel type de voyageur es-tu ?", emoji:"🎒", note:"",
+    outcomes:{
+      routard:{title:"Le routard aventurier", emoji:"🎒", desc:"Sac à dos, débrouille et envie de vivre comme un local : tu voyages léger mais tu vis intensément."},
+      tout_inclus:{title:"Le tout-inclus relax", emoji:"🏖️", desc:"Pour toi un voyage, c'est avant tout se reposer sans avoir rien à organiser. Et c'est très bien comme ça."},
+      planificateur:{title:"Le planificateur méticuleux", emoji:"🗺️", desc:"Itinéraire, réservations, checklist : rien n'est laissé au hasard, et ça marche à chaque fois."},
+      spontane:{title:"Le spontané", emoji:"🎲", desc:"Tu réserves au dernier moment et tu improvises sur place. Le meilleur voyage est souvent celui qu'on n'a pas prévu."}
+    },
+    questions:[
+      {q:"Avant un voyage, tu...", options:[
+        {t:"Pars avec un sac à dos et le strict nécessaire, prêt(e) à t'adapter.", k:"routard"},
+        {t:"Réserves un hôtel tout compris pour ne penser à rien sur place.", k:"tout_inclus"},
+        {t:"Prépares un itinéraire détaillé, heure par heure.", k:"planificateur"},
+        {t:"Réserves au dernier moment, sans trop savoir où tu vas atterrir.", k:"spontane"}
+      ]},
+      {q:"Ton hébergement idéal ?", options:[
+        {t:"Une auberge de jeunesse ou chez l'habitant, pour vivre comme un local.", k:"routard"},
+        {t:"Un grand hôtel avec piscine et service en chambre.", k:"tout_inclus"},
+        {t:"Un logement réservé des mois à l'avance, bien noté et vérifié.", k:"planificateur"},
+        {t:"Peu importe, tu trouveras bien sur place.", k:"spontane"}
+      ]},
+      {q:"Ce qui te fait le plus vibrer en voyage ?", options:[
+        {t:"Découvrir des lieux hors des sentiers battus, quitte à te perdre.", k:"routard"},
+        {t:"Te détendre complètement, sans rien avoir à organiser.", k:"tout_inclus"},
+        {t:"Cocher toutes les visites prévues sur ta liste.", k:"planificateur"},
+        {t:"Suivre une opportunité inattendue, même si ça change tout le programme.", k:"spontane"}
+      ]},
+      {q:"Ta valise ressemble à...", options:[
+        {t:"Un sac à dos compact, pensé pour l'autonomie.", k:"routard"},
+        {t:"Une grande valise avec tout le confort nécessaire.", k:"tout_inclus"},
+        {t:"Une valise organisée avec une checklist cochée à l'avance.", k:"planificateur"},
+        {t:"Une valise faite la veille, voire le matin même.", k:"spontane"}
+      ]},
+      {q:"Ton budget voyage, tu le gères comment ?", options:[
+        {t:"Au plus économique, pour voyager le plus longtemps possible.", k:"routard"},
+        {t:"Tu préfères payer un peu plus pour le confort et la tranquillité.", k:"tout_inclus"},
+        {t:"Un budget prévu au centime près, réparti par poste de dépense.", k:"planificateur"},
+        {t:"Tu improvises en fonction de ce qu'il te reste sur place.", k:"spontane"}
+      ]},
+      {q:"Ce que tes proches disent de toi en voyage ?", options:[
+        {t:"Que tu es prêt(e) à dormir n'importe où pour vivre l'aventure.", k:"routard"},
+        {t:"Que tu sais profiter et te reposer comme personne.", k:"tout_inclus"},
+        {t:"Que tu as toujours un plan B, et même un plan C.", k:"planificateur"},
+        {t:"Que tu es capable de tout changer à la dernière minute, et que ça marche.", k:"spontane"}
+      ]}
+    ]
+  },
+  superhero: {
+    label:"🦸 Quel super-héros es-tu ?", emoji:"🦸", note:"",
+    outcomes:{
+      superman:{title:"Superman", emoji:"🦸", desc:"Fort et droit, tu inspires confiance et tu es toujours là quand on a besoin de toi."},
+      batman:{title:"Batman", emoji:"🦇", desc:"Stratège et discret, tu prépares tout dans l'ombre et tu as toujours un coup d'avance."},
+      spiderman:{title:"Spider-Man", emoji:"🕷️", desc:"Débrouillard et proche des gens, tu jongles entre ta vie normale et tes responsabilités avec humour."},
+      blackpanther:{title:"Black Panther", emoji:"👑", desc:"Leader fier de ses racines, tu allies tradition et modernité avec autorité naturelle."}
+    },
+    questions:[
+      {q:"Face à une injustice, tu...", options:[
+        {t:"Interviens directement et sans détour, avec force et assurance.", k:"superman"},
+        {t:"Prépares un plan discret dans l'ombre avant d'agir.", k:"batman"},
+        {t:"Improvises avec les moyens du bord, souvent avec humour.", k:"spiderman"},
+        {t:"Rassembles les tiens et agis avec fierté et dignité.", k:"blackpanther"}
+      ]},
+      {q:"Ta plus grande force ?", options:[
+        {t:"Une force et une droiture à toute épreuve.", k:"superman"},
+        {t:"Une intelligence stratégique et une préparation minutieuse.", k:"batman"},
+        {t:"Ton agilité à jongler entre plusieurs vies à la fois.", k:"spiderman"},
+        {t:"Ton sens du leadership, ancré dans tes racines.", k:"blackpanther"}
+      ]},
+      {q:"Ton quotidien, en dehors des moments héroïques ?", options:[
+        {t:"Tu restes simple et discret malgré tout ce que tu portes.", k:"superman"},
+        {t:"Tu gères un empire dans l'ombre, personne ne sait tout de toi.", k:"batman"},
+        {t:"Tu jongles entre obligations du quotidien et ta mission.", k:"spiderman"},
+        {t:"Tu diriges avec fierté, entouré(e) des tiens.", k:"blackpanther"}
+      ]},
+      {q:"Ce que les autres admirent chez toi ?", options:[
+        {t:"Ta droiture et ta capacité à inspirer confiance.", k:"superman"},
+        {t:"Ta capacité à toujours avoir un coup d'avance.", k:"batman"},
+        {t:"Ta capacité à rester toi-même malgré la pression.", k:"spiderman"},
+        {t:"Ta manière d'allier tradition et modernité avec fierté.", k:"blackpanther"}
+      ]},
+      {q:"Ton style pour résoudre un problème complexe ?", options:[
+        {t:"Foncer avec assurance, porté(e) par tes convictions.", k:"superman"},
+        {t:"Analyser froidement toutes les options avant d'agir.", k:"batman"},
+        {t:"Improviser avec créativité, quitte à ajuster en chemin.", k:"spiderman"},
+        {t:"Consulter les tiens puis trancher avec autorité.", k:"blackpanther"}
+      ]},
+      {q:"Ce qui te définit le mieux ?", options:[
+        {t:"Le protecteur sur qui tout le monde peut compter.", k:"superman"},
+        {t:"Le stratège de l'ombre, toujours plusieurs coups d'avance.", k:"batman"},
+        {t:"Le débrouillard au grand cœur, jamais à court de solutions.", k:"spiderman"},
+        {t:"Le leader fier de ses racines, tourné vers l'avenir.", k:"blackpanther"}
+      ]}
+    ]
+  },
+  whatsapp: {
+    label:"💬 Quel ami es-tu dans le groupe WhatsApp ?", emoji:"💬", note:"",
+    outcomes:{
+      rigolo:{title:"Le rigolo", emoji:"😂", desc:"Blagues, mèmes et GIFs à toute heure : c'est toi qui mets l'ambiance dans le groupe."},
+      organisateur:{title:"L'organisateur", emoji:"🗓️", desc:"Sans toi, rien ne s'organiserait jamais. Tu proposes les dates et tu relances tout le monde."},
+      silencieux:{title:"Le silencieux qui lit tout", emoji:"👀", desc:"Tu ne réponds pas toujours, mais tu es au courant de tout ce qui se passe dans le groupe."},
+      retardataire:{title:"Le retardataire chronique", emoji:"⏰", desc:"Tu réponds... avec un peu (beaucoup) de retard. Mais toujours fidèle au poste, à ton propre rythme."}
+    },
+    questions:[
+      {q:"Dans le groupe familial, tu es plutôt du genre à...", options:[
+        {t:"Envoyer des blagues et des mèmes à toute heure.", k:"rigolo"},
+        {t:"Proposer des dates et relancer tout le monde pour organiser un événement.", k:"organisateur"},
+        {t:"Tout lire sans forcément répondre, mais tu es toujours au courant de tout.", k:"silencieux"},
+        {t:"Répondre... plusieurs heures, voire plusieurs jours après tout le monde.", k:"retardataire"}
+      ]},
+      {q:"Quand un message important tombe dans le groupe, tu...", options:[
+        {t:"Détends l'ambiance avec une réponse drôle.", k:"rigolo"},
+        {t:"Prends les choses en main pour que ça avance concrètement.", k:"organisateur"},
+        {t:"Le lis attentivement, sans forcément intervenir tout de suite.", k:"silencieux"},
+        {t:"Le vois... et tu réponds beaucoup plus tard, promis tu avais l'intention de le faire.", k:"retardataire"}
+      ]},
+      {q:"Ton emoji ou GIF le plus utilisé ?", options:[
+        {t:"Un GIF ou emoji qui fait mourir de rire tout le monde.", k:"rigolo"},
+        {t:"Un pouce levé ou une coche, pour valider une organisation.", k:"organisateur"},
+        {t:"Peu d'emojis, tu préfères observer.", k:"silencieux"},
+        {t:"Un emoji gêné, pour t'excuser de ta réponse tardive.", k:"retardataire"}
+      ]},
+      {q:"Ce que les autres disent de toi dans le groupe ?", options:[
+        {t:"Que tu mets l'ambiance à chaque message.", k:"rigolo"},
+        {t:"Que rien ne se ferait sans toi pour tout organiser.", k:"organisateur"},
+        {t:"Que tu es discret(ète) mais que tu sais tout ce qui se passe.", k:"silencieux"},
+        {t:"Que tu es fidèle au poste... avec toujours un peu de retard.", k:"retardataire"}
+      ]},
+      {q:"Un appel vidéo de groupe est lancé, tu...", options:[
+        {t:"Arrives en mettant tout de suite l'ambiance.", k:"rigolo"},
+        {t:"Arrives à l'heure, avec l'ordre du jour en tête.", k:"organisateur"},
+        {t:"Rejoins discrètement, micro coupé la moitié du temps.", k:"silencieux"},
+        {t:"Rejoins... quand l'appel est presque terminé.", k:"retardataire"}
+      ]},
+      {q:"Comment décrirais-tu ton rôle dans le groupe ?", options:[
+        {t:"L'animateur, celui qui met de la vie dans les conversations.", k:"rigolo"},
+        {t:"Le pilier, celui qui structure et fait avancer les choses.", k:"organisateur"},
+        {t:"L'observateur discret mais toujours présent.", k:"silencieux"},
+        {t:"Le membre fidèle, juste avec son propre tempo.", k:"retardataire"}
       ]}
     ]
   }
@@ -1115,22 +1269,123 @@ function renderPersoResult(activeGame, myResult){
   `;
 }
 
-/* ============== ECRAN : HISTORIQUE (ACCESSIBLE A TOUS) ============== */
+/* ============== CALCUL DES STATISTIQUES ============== */
+function computeStats(historyItems){
+  // historyItems doit être trié du plus récent au plus ancien (desc)
+  const quizItems = historyItems.filter(h=>h.mode === "quiz");
+  const persoItems = historyItems.filter(h=>h.mode === "perso");
+
+  // Historique des scores par joueur, du plus récent au plus ancien
+  const playerScores = {};
+  quizItems.forEach(h=>{
+    Object.entries(h.results || {}).forEach(([name,score])=>{
+      if(!playerScores[name]) playerScores[name] = [];
+      playerScores[name].push({score, key:h.key, date:h.date});
+    });
+  });
+
+  // Taux de bonne réponse global (famille entière, tous quiz confondus)
+  let totalPoints = 0, totalPossible = 0;
+  quizItems.forEach(h=>{
+    Object.values(h.results || {}).forEach(score=>{ totalPoints += score; totalPossible += 10; });
+  });
+  const globalAccuracy = totalPossible ? Math.round(totalPoints / totalPossible * 100) : null;
+
+  // Thématique la plus jouée
+  const themeCounts = {};
+  quizItems.forEach(h=>{ themeCounts[h.key] = (themeCounts[h.key] || 0) + 1; });
+  let topTheme = null, topThemeCount = 0;
+  Object.entries(themeCounts).forEach(([k,c])=>{ if(c > topThemeCount){ topThemeCount = c; topTheme = k; } });
+
+  // Record all-time (meilleur score individuel jamais obtenu)
+  let record = null;
+  quizItems.forEach(h=>{
+    Object.entries(h.results || {}).forEach(([name,score])=>{
+      if(!record || score > record.score){ record = {name, score, key:h.key, date:h.date}; }
+    });
+  });
+
+  // Victoires (top score de chaque partie ; égalité = victoire partagée)
+  const wins = {};
+  quizItems.forEach(h=>{
+    const entries = Object.entries(h.results || {});
+    if(!entries.length) return;
+    const maxScore = Math.max(...entries.map(([,s])=>s));
+    entries.forEach(([name,s])=>{ if(s === maxScore) wins[name] = (wins[name] || 0) + 1; });
+  });
+
+  // Stats détaillées par joueur
+  const playerStats = {};
+  Object.entries(playerScores).forEach(([name, arr])=>{
+    const games = arr.length;
+    const totalPts = arr.reduce((a,b)=>a + b.score, 0);
+    const avg = totalPts / games;
+    const accuracy = Math.round(avg / 10 * 100);
+    const best = arr.reduce((a,b)=> b.score > a.score ? b : a, arr[0]);
+    let progression = null;
+    if(games >= 2){
+      const latest = arr[0].score, prev = arr[1].score;
+      progression = prev === 0 ? (latest > 0 ? 100 : 0) : Math.round((latest - prev) / prev * 100);
+    }
+    playerStats[name] = { games, avg: Math.round(avg*10)/10, accuracy, best, progression, wins: wins[name] || 0, latest: arr[0] };
+  });
+
+  // Jeux de personnalité : profil le plus fréquent par jeu
+  const persoStats = {};
+  persoItems.forEach(h=>{
+    if(!persoStats[h.key]) persoStats[h.key] = {total:0, counts:{}};
+    Object.values(h.results || {}).forEach(outcomeKey=>{
+      persoStats[h.key].total++;
+      persoStats[h.key].counts[outcomeKey] = (persoStats[h.key].counts[outcomeKey] || 0) + 1;
+    });
+  });
+
+  return {globalAccuracy, topTheme, topThemeCount, record, playerStats, persoStats,
+          totalQuizGames: quizItems.length, totalPersoGames: persoItems.length};
+}
+
+/* ============== ECRAN : HISTORIQUE & STATISTIQUES (ACCESSIBLE A TOUS) ============== */
 function renderHistoryScreen(){
-  el.innerHTML = `<div class="spinner"></div><p class="subtitle">Chargement de l'historique...</p>`;
+  el.innerHTML = `<div class="spinner"></div><p class="subtitle">Chargement des statistiques...</p>`;
   Promise.all([
     db.collection("meta").doc("season").get(),
-    db.collection("history").orderBy("createdAt","desc").limit(15).get().catch(()=> db.collection("history").limit(15).get())
+    db.collection("history").orderBy("createdAt","desc").limit(60).get().catch(()=> db.collection("history").limit(60).get())
   ]).then(([seasonSnap, histSnap])=>{
     const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
     const ranking = Object.entries(season.totals || {}).sort((a,b)=>b[1].points-a[1].points);
     const medals = ["🥇","🥈","🥉"];
     const historyItems = [];
     histSnap.forEach(doc=> historyItems.push(doc.data()));
+    const stats = computeStats(historyItems);
+    const topThemeLabel = stats.topTheme ? (THEMES[stats.topTheme] ? THEMES[stats.topTheme].label : stats.topTheme) : null;
+
+    const statsRanking = Object.entries(stats.playerStats).sort((a,b)=> b[1].avg - a[1].avg);
 
     el.innerHTML = `
-      <h1>📊 Classement & historique</h1>
-      <div class="section-title">Classement général de la saison (Quiz Culture)</div>
+      <h1>📊 Statistiques & historique</h1>
+      <p class="subtitle">${stats.totalQuizGames} quiz · ${stats.totalPersoGames} jeux de personnalité joués</p>
+
+      <div class="section-title">Vue d'ensemble</div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-value">${stats.globalAccuracy !== null ? stats.globalAccuracy + '%' : '—'}</div>
+          <div class="kpi-label">✅ Taux de bonne réponse global (famille)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">${stats.record ? stats.record.score + '/10' : '—'}</div>
+          <div class="kpi-label">🏅 Record all-time${stats.record ? ` — ${stats.record.name}` : ''}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">${topThemeLabel || '—'}</div>
+          <div class="kpi-label">🔥 Thématique la plus jouée${stats.topThemeCount ? ` (${stats.topThemeCount}x)` : ''}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">${stats.totalQuizGames}</div>
+          <div class="kpi-label">🎮 Quiz Culture disputés au total</div>
+        </div>
+      </div>
+
+      <div class="section-title">Classement général de la saison</div>
       ${ranking.length ? ranking.map(([name,d],i)=>`
         <div class="rank-row ${i===0?'top1':''}">
           <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
@@ -1139,8 +1394,50 @@ function renderHistoryScreen(){
         </div>
       `).join('') : `<p class="small-note">Pas encore de quiz joué.</p>`}
 
+      <div class="section-title">Progression par joueur</div>
+      ${statsRanking.length ? statsRanking.map(([name,s])=>{
+        let trendHTML = `<span class="trend-flat">— première partie</span>`;
+        if(s.progression !== null){
+          if(s.progression > 0) trendHTML = `<span class="trend-up">▲ +${s.progression}% vs partie précédente</span>`;
+          else if(s.progression < 0) trendHTML = `<span class="trend-down">▼ ${s.progression}% vs partie précédente</span>`;
+          else trendHTML = `<span class="trend-flat">＝ stable vs partie précédente</span>`;
+        }
+        return `
+          <div class="player-stat-card">
+            <div class="player-stat-head">
+              <div class="avatar" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fb923c);display:flex;align-items:center;justify-content:center;font-size:.9rem;">${avatarFor(name)}</div>
+              <span class="name">${name}</span>
+              ${trendHTML}
+            </div>
+            <div class="player-stat-metrics">
+              <div><b>${s.games}</b>parties</div>
+              <div><b>${s.accuracy}%</b>réussite moy.</div>
+              <div><b>${s.best.score}/10</b>meilleur score</div>
+            </div>
+            <div class="small-note" style="margin-top:8px;">🏆 ${s.wins} victoire${s.wins>1?'s':''} de partie</div>
+          </div>
+        `;
+      }).join('') : `<p class="small-note">Pas encore assez de données.</p>`}
+
+      ${stats.totalPersoGames ? `
+        <div class="section-title">Jeux de personnalité (profils les plus obtenus)</div>
+        ${Object.entries(stats.persoStats).map(([key, d])=>{
+          const pq = PERSONALITY_QUIZZES[key];
+          if(!pq) return '';
+          const sorted = Object.entries(d.counts).sort((a,b)=>b[1]-a[1]);
+          const top = sorted[0];
+          const topOutcome = top ? pq.outcomes[top[0]] : null;
+          return `
+            <div class="rank-row" style="flex-direction:column; align-items:flex-start;">
+              <strong>${pq.label}</strong>
+              <span style="color:#64748b;font-size:.85rem;">${d.total} réponse(s) · le plus fréquent : ${topOutcome ? topOutcome.emoji + ' ' + topOutcome.title : '—'}${top ? ` (${top[1]}x)` : ''}</span>
+            </div>
+          `;
+        }).join('')}
+      ` : ''}
+
       <div class="section-title">Historique des jeux</div>
-      ${historyItems.length ? historyItems.map(h=>{
+      ${historyItems.length ? historyItems.slice(0,20).map(h=>{
         const isQuiz = h.mode === "quiz";
         const label = isQuiz ? (THEMES[h.key] ? THEMES[h.key].label : h.key) : (PERSONALITY_QUIZZES[h.key] ? PERSONALITY_QUIZZES[h.key].label : h.key);
         const resultsTxt = Object.entries(h.results || {}).map(([n,v])=>{
