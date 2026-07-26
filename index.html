@@ -1536,6 +1536,7 @@ function renderAdminDashboardWith(activeGame){
     </div>
 
     <button class="btn btn-primary" id="launch-btn" disabled>Choisis un jeu pour lancer</button>
+    <button class="btn-link" id="recover-btn" type="button">🔧 Récupérer des parties perdues (si besoin)</button>
     <button class="btn-link" id="back-btn" type="button">← Retour</button>
   `;
 
@@ -1558,6 +1559,7 @@ function renderAdminDashboardWith(activeGame){
   });
 
   document.getElementById("back-btn").addEventListener("click", ()=> handleActiveGame(currentActiveGame));
+  document.getElementById("recover-btn").addEventListener("click", recoverLostGames);
 
   const endBtn = document.getElementById("end-game-btn");
   if(endBtn) endBtn.addEventListener("click", endGame);
@@ -1571,22 +1573,140 @@ function renderAdminDashboardWith(activeGame){
 }
 
 function launchGame(mode, key, chronoValue){
-  const finish = (activeGame)=>{
+  const doLaunch = (activeGame)=>{
     db.collection("meta").doc("state").set({activeGame}).then(()=>{
       renderAdminDashboardWith(activeGame);
     });
   };
-  if(mode === "quiz"){
-    pickRotatingQuestions(key, 10).then(picked=>{
-      const bank = picked.map(item=>({
-        q:item.q, type:item.type || "single",
-        options: shuffle(item.options), correct:item.correct
-      }));
-      finish({ id:"g_"+Date.now(), mode:"quiz", key, chrono: parseInt(chronoValue,10), questions: bank, startedAt: Date.now() });
+  const buildAndLaunch = ()=>{
+    if(mode === "quiz"){
+      pickRotatingQuestions(key, 10).then(picked=>{
+        const bank = picked.map(item=>({
+          q:item.q, type:item.type || "single",
+          options: shuffle(item.options), correct:item.correct
+        }));
+        doLaunch({ id:"g_"+Date.now(), mode:"quiz", key, chrono: parseInt(chronoValue,10), questions: bank, startedAt: Date.now() });
+      });
+    } else {
+      doLaunch({ id:"g_"+Date.now(), mode:"perso", key, startedAt: Date.now() });
+    }
+  };
+  // Archive automatiquement le jeu précédent (s'il y en a un) avant d'en lancer un nouveau,
+  // pour ne jamais perdre de données même si "Terminer ce jeu" n'a pas été cliqué.
+  db.collection("meta").doc("state").get().then(doc=>{
+    const prevActiveGame = doc.exists ? (doc.data().activeGame || null) : null;
+    if(prevActiveGame){
+      archiveGame(prevActiveGame).then(buildAndLaunch);
+    } else {
+      buildAndLaunch();
+    }
+  });
+}
+
+/* Archive une partie active (résultats -> history + season) si elle a des réponses,
+   sans jamais rien supprimer. Réutilisée par endGame() et par launchGame(). */
+function archiveGame(activeGame){
+  return db.collection("liveResults").where("gameId","==",activeGame.id).get().then(snap=>{
+    if(snap.empty) return Promise.resolve();
+    const results = {};
+    snap.forEach(d=>{
+      const data = d.data();
+      results[data.player] = data.mode === "quiz" ? data.score : data.outcomeKey;
     });
-  } else {
-    finish({ id:"g_"+Date.now(), mode:"perso", key, startedAt: Date.now() });
-  }
+    const histDoc = {
+      gameId: activeGame.id, mode: activeGame.mode, key: activeGame.key, date: todayStr(),
+      results, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    const tasks = [db.collection("history").add(histDoc)];
+    if(activeGame.mode === "quiz"){
+      tasks.push(db.collection("meta").doc("season").get().then(seasonSnap=>{
+        const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
+        if(!season.totals) season.totals = {};
+        Object.entries(results).forEach(([name,score])=>{
+          if(!season.totals[name]) season.totals[name] = {points:0, games:0};
+          season.totals[name].points += score;
+          season.totals[name].games += 1;
+        });
+        return db.collection("meta").doc("season").set(season);
+      }));
+    }
+    return Promise.all(tasks);
+  });
+}
+
+/* Retrouve les parties jouées (liveResults) qui n'ont jamais été archivées dans l'historique
+   -- par exemple si "Terminer ce jeu" n'avait pas été cliqué avant cette mise à jour --
+   et les ajoute à l'historique + au classement de la saison. Ne supprime jamais rien. */
+function recoverLostGames(){
+  if(!confirm("Rechercher les parties jouées mais jamais enregistrées dans l'historique, et les récupérer ?")) return;
+  Promise.all([
+    db.collection("liveResults").get(),
+    db.collection("history").get()
+  ]).then(([liveSnap, histSnap])=>{
+    const alreadyArchived = new Set();
+    histSnap.forEach(d=>{ const data = d.data(); if(data.gameId) alreadyArchived.add(data.gameId); });
+
+    const groups = {};
+    liveSnap.forEach(d=>{
+      const data = d.data();
+      if(!data.gameId || alreadyArchived.has(data.gameId)) return;
+      if(!groups[data.gameId]) groups[data.gameId] = { mode:data.mode, key:data.key, results:{}, finishedAtMs:null };
+      groups[data.gameId].results[data.player] = data.mode === "quiz" ? data.score : data.outcomeKey;
+      if(data.finishedAt && typeof data.finishedAt.toMillis === "function"){
+        const ms = data.finishedAt.toMillis();
+        if(!groups[data.gameId].finishedAtMs || ms > groups[data.gameId].finishedAtMs){
+          groups[data.gameId].finishedAtMs = ms;
+        }
+      }
+    });
+
+    const gameIds = Object.keys(groups);
+    if(gameIds.length === 0){
+      alert("Aucune partie perdue trouvée, tout est déjà à jour !");
+      return;
+    }
+
+    const tasks = [];
+    const seasonUpdates = {};
+    gameIds.forEach(gid=>{
+      const g = groups[gid];
+      const dateStr = g.finishedAtMs
+        ? new Date(g.finishedAtMs).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'})
+        : todayStr();
+      tasks.push(db.collection("history").add({
+        gameId: gid, mode: g.mode, key: g.key, date: dateStr, results: g.results,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }));
+      if(g.mode === "quiz"){
+        Object.entries(g.results).forEach(([name,score])=>{
+          if(!seasonUpdates[name]) seasonUpdates[name] = {points:0, games:0};
+          seasonUpdates[name].points += score;
+          seasonUpdates[name].games += 1;
+        });
+      }
+    });
+
+    Promise.all(tasks).then(()=>{
+      if(Object.keys(seasonUpdates).length === 0){
+        alert(gameIds.length + " partie(s) récupérée(s) !");
+        renderAdminDashboard();
+        return;
+      }
+      db.collection("meta").doc("season").get().then(seasonSnap=>{
+        const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
+        if(!season.totals) season.totals = {};
+        Object.entries(seasonUpdates).forEach(([name,delta])=>{
+          if(!season.totals[name]) season.totals[name] = {points:0, games:0};
+          season.totals[name].points += delta.points;
+          season.totals[name].games += delta.games;
+        });
+        db.collection("meta").doc("season").set(season).then(()=>{
+          alert(gameIds.length + " partie(s) récupérée(s) et ajoutée(s) au classement !");
+          renderAdminDashboard();
+        });
+      });
+    });
+  });
 }
 
 /* Choisit 10 questions en évitant de répéter celles déjà utilisées récemment
@@ -1612,33 +1732,9 @@ function endGame(){
   db.collection("meta").doc("state").get().then(doc=>{
     const activeGame = doc.exists ? (doc.data().activeGame || null) : null;
     if(!activeGame){ renderAdminDashboardWith(null); return; }
-    db.collection("liveResults").where("gameId","==",activeGame.id).get().then(snap=>{
-      const results = {};
-      snap.forEach(d=>{
-        const data = d.data();
-        results[data.player] = data.mode === "quiz" ? data.score : data.outcomeKey;
-      });
-      const histDoc = {
-        mode: activeGame.mode, key: activeGame.key, date: todayStr(),
-        results, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-      const tasks = [db.collection("history").add(histDoc)];
-      if(activeGame.mode === "quiz"){
-        tasks.push(db.collection("meta").doc("season").get().then(seasonSnap=>{
-          const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
-          if(!season.totals) season.totals = {};
-          Object.entries(results).forEach(([name,score])=>{
-            if(!season.totals[name]) season.totals[name] = {points:0, games:0};
-            season.totals[name].points += score;
-            season.totals[name].games += 1;
-          });
-          return db.collection("meta").doc("season").set(season);
-        }));
-      }
-      Promise.all(tasks).then(()=>{
-        db.collection("meta").doc("state").set({activeGame:null}).then(()=>{
-          renderAdminDashboardWith(null);
-        });
+    archiveGame(activeGame).then(()=>{
+      db.collection("meta").doc("state").set({activeGame:null}).then(()=>{
+        renderAdminDashboardWith(null);
       });
     });
   });
