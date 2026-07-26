@@ -915,6 +915,10 @@ function boot(){
     firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
+    // Garde une copie locale (sur le téléphone) des données déjà vues : au prochain
+    // lancement de l'appli, l'historique et le classement s'affichent instantanément
+    // depuis ce cache, pendant que les toutes dernières données arrivent en tâche de fond.
+    db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
   }catch(e){
     renderFatalError(e);
     return;
@@ -1322,6 +1326,9 @@ function renderQuizResults(activeGame, myResult){
         renderSeasonBlock();
       });
     });
+  // Filet de sécurité : si après 4s toujours rien (connexion très lente), on affiche
+  // quand même ce qu'on a plutôt que de laisser le spinner tourner indéfiniment.
+  setTimeout(()=>{ if(!historyLoaded){ historyLoaded = true; renderSeasonBlock(); } }, 4000);
 
   liveResultsUnsub = db.collection("liveResults").where("gameId","==",activeGame.id)
     .onSnapshot(snap=>{
@@ -1533,6 +1540,9 @@ function renderHistoryScreen(){
         renderScreenFromData();
       });
     });
+  // Filet de sécurité : si après 4s toujours rien (connexion très lente), on affiche
+  // quand même ce qu'on a plutôt que de laisser le spinner tourner indéfiniment.
+  setTimeout(()=>{ if(!historyLoaded){ historyLoaded = true; renderScreenFromData(); } }, 4000);
 
   function renderScreenFromData(){
     if(!historyLoaded) return; // on attend d'avoir le vrai historique avant d'afficher quoi que ce soit
