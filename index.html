@@ -177,13 +177,40 @@
   .stats-table .player-cell{ display:flex; align-items:center; gap:6px; font-weight:800; color:#1e1b4b; }
   .stats-table .pts-cell{ font-weight:800; color:#1e1b4b; font-size:.92rem; }
   .form-dot{
-    display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px;
-    border-radius:50%; font-size:.62rem; font-weight:800; margin:0 1px;
+    display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px;
+    padding:0 4px; border-radius:10px; font-size:.68rem; font-weight:800; margin:0 1px;
   }
   .form-win{ background:#dcfce7; color:#16a34a; }
   .form-loss{ background:#fee2e2; color:#dc2626; }
   .spinner{width:34px; height:34px; border:4px solid #e2e8f0; border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin:20px auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ============== ADAPTATION MOBILE ============== */
+  @media (max-width: 600px){
+    body{ padding:0; align-items:flex-start; }
+    .app{ max-width:100%; }
+    .card{ border-radius:0; min-height:100vh; padding:22px 16px 34px; box-shadow:none; }
+    .topbar{ border-radius:0; margin-bottom:0; padding:10px 14px; }
+  }
+  @media (max-width: 420px){
+    h1{ font-size:1.3rem; }
+    .subtitle{ font-size:.85rem; margin-bottom:18px; }
+    .card{ padding:18px 14px 30px; }
+    .theme-grid, .name-grid{ gap:8px; }
+    .theme-btn{ padding:13px 8px; font-size:.88rem; }
+    .name-btn{ padding:14px 8px; font-size:.92rem; }
+    .btn{ padding:14px; font-size:1rem; }
+    .footer-actions{ flex-wrap:wrap; }
+    .kpi-grid{ gap:8px; }
+    .kpi-value{ font-size:1.15rem; }
+    .player-stat-metrics{ font-size:.72rem; }
+    .stats-table{ font-size:.72rem; }
+    .stats-table th{ font-size:.6rem; padding:6px 3px; }
+    .stats-table td{ padding:9px 3px; }
+    .question-text{ font-size:1.05rem; }
+    .option{ padding:12px 13px; font-size:.92rem; }
+    .timer-badge{ font-size:.95rem; padding:5px 10px; }
+  }
 </style>
 </head>
 <body>
@@ -1274,7 +1301,7 @@ function renderQuizResults(activeGame, myResult){
       .then(histSnap=>{
         const historyItems = [];
         histSnap.forEach(d=> historyItems.push(d.data()));
-        const stats = computeStats(historyItems);
+        const stats = computeStats(dedupeHistory(historyItems));
         const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
         target.innerHTML = ranking.length ? renderSeasonTableHTML(ranking, stats.playerStats, myName) : `<p class="small-note">Premier quiz de la saison !</p>`;
       });
@@ -1291,6 +1318,27 @@ function renderPersoResult(activeGame, myResult){
     <p class="subtitle" style="margin-top:10px;">${outcome.desc}</p>
     <p class="small-note">Ce jeu n'a pas de classement, juste pour le fun 🎉 Le résultat est gardé dans l'historique.</p>
   `;
+}
+
+/* Si une même partie (gameId) a été archivée plusieurs fois (ex. archivage
+   déclenché deux fois pendant qu'un joueur finissait de répondre), on ne garde
+   que la version la plus récente. Les parties sans gameId (anciennes données)
+   sont dédupliquées sur mode+thème+date, par sécurité. */
+function dedupeHistory(historyItems){
+  const sorted = historyItems.slice().sort((a,b)=>{
+    const ta = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+    const tb = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+    return tb - ta;
+  });
+  const seen = new Set();
+  const out = [];
+  sorted.forEach(h=>{
+    const id = h.gameId || `${h.mode}_${h.key}_${h.date}`;
+    if(seen.has(id)) return;
+    seen.add(id);
+    out.push(h);
+  });
+  return out;
 }
 
 /* ============== CALCUL DES STATISTIQUES ============== */
@@ -1375,7 +1423,7 @@ function renderSeasonTableHTML(ranking, playerStats, highlightName){
     const winsTxt = ps ? ps.wins : '—';
     const last5 = ps ? ps.last5.slice().reverse() : [];
     const formHTML = last5.length
-      ? last5.map(g=>`<span class="form-dot ${g.won?'form-win':'form-loss'}">${g.won?'✓':'✕'}</span>`).join('')
+      ? last5.map(g=>`<span class="form-dot ${g.won?'form-win':'form-loss'}">${g.score}</span>`).join('')
       : '<span style="color:#cbd5e1;">—</span>';
     return `
       <tr class="${i===0?'top1':''} ${name===highlightName?'me-row':''}">
@@ -1411,8 +1459,9 @@ function renderHistoryScreen(){
     .catch(()=> db.collection("history").limit(500).get())
     .then(histSnap=>{
     const medals = ["🥇","🥈","🥉"];
-    const historyItems = [];
-    histSnap.forEach(doc=> historyItems.push(doc.data()));
+    const rawHistoryItems = [];
+    histSnap.forEach(doc=> rawHistoryItems.push(doc.data()));
+    const historyItems = dedupeHistory(rawHistoryItems);
     const stats = computeStats(historyItems);
     const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
     const topThemeLabel = stats.topTheme ? (THEMES[stats.topTheme] ? THEMES[stats.topTheme].label : stats.topTheme) : null;
@@ -1445,7 +1494,7 @@ function renderHistoryScreen(){
 
       <div class="section-title">Classement général de la saison</div>
       ${renderSeasonTableHTML(ranking, stats.playerStats, myName)}
-      <p class="small-note" style="margin-top:0;">J = parties jouées · Moy = score moyen · Meill. = meilleur score · Vict. = victoires de partie · 5 derniers = ✓ gagné / ✕ pas gagné</p>
+      <p class="small-note" style="margin-top:0;">J = parties jouées · Moy = score moyen · Meill. = meilleur score · Vict. = victoires de partie</p>
 
       <div class="section-title">Progression par joueur</div>
       ${statsRanking.length ? statsRanking.map(([name,s])=>{
