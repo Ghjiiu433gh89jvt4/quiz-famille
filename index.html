@@ -1289,10 +1289,13 @@ function renderQuizResults(activeGame, myResult){
   // dès qu'un joueur termine, tout le monde voit son classement se mettre à jour.
   let cachedHistory = [];
   let liveGameResults = {};
+  let historyLoaded = false; // évite d'afficher un classement incomplet avant que
+                              // "history" ait fini de charger (course avec liveResults)
 
   function renderSeasonBlock(){
     const target = document.getElementById("season-rank");
     if(!target) return;
+    if(!historyLoaded) return; // on attend d'avoir le vrai historique avant de calculer quoi que ce soit
     let historyItems = dedupeHistory(cachedHistory);
     if(Object.keys(liveGameResults).length && !historyItems.some(h=>h.gameId === activeGame.id)){
       historyItems = [{
@@ -1309,11 +1312,13 @@ function renderQuizResults(activeGame, myResult){
     .onSnapshot(histSnap=>{
       cachedHistory = [];
       histSnap.forEach(d=> cachedHistory.push(d.data()));
+      historyLoaded = true;
       renderSeasonBlock();
     }, ()=>{
       db.collection("history").limit(500).get().then(histSnap=>{
         cachedHistory = [];
         histSnap.forEach(d=> cachedHistory.push(d.data()));
+        historyLoaded = true;
         renderSeasonBlock();
       });
     });
@@ -1501,6 +1506,8 @@ function renderHistoryScreen(){
   let rawHistoryItems = [];
   let liveGameResults = {};
   let liveGameInfo = null; // {key, gameId} de la partie en cours, si il y en a une
+  let historyLoaded = false; // évite d'afficher des stats incomplètes avant que
+                              // "history" ait fini de charger (course avec liveResults)
 
   if(currentActiveGame && currentActiveGame.mode === "quiz"){
     liveGameInfo = {key: currentActiveGame.key, gameId: currentActiveGame.id};
@@ -1516,16 +1523,19 @@ function renderHistoryScreen(){
     .onSnapshot(histSnap=>{
       rawHistoryItems = [];
       histSnap.forEach(doc=> rawHistoryItems.push(doc.data()));
+      historyLoaded = true;
       renderScreenFromData();
     }, ()=>{
       db.collection("history").limit(500).get().then(histSnap=>{
         rawHistoryItems = [];
         histSnap.forEach(doc=> rawHistoryItems.push(doc.data()));
+        historyLoaded = true;
         renderScreenFromData();
       });
     });
 
   function renderScreenFromData(){
+    if(!historyLoaded) return; // on attend d'avoir le vrai historique avant d'afficher quoi que ce soit
     const medals = ["🥇","🥈","🥉"];
     let historyItems = dedupeHistory(rawHistoryItems);
     if(liveGameInfo && Object.keys(liveGameResults).length && !historyItems.some(h=>h.gameId === liveGameInfo.gameId)){
