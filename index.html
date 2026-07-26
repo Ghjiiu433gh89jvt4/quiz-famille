@@ -162,6 +162,26 @@
   .trend-up{color:#16a34a; font-weight:800;}
   .trend-down{color:#dc2626; font-weight:800;}
   .trend-flat{color:#94a3b8; font-weight:800;}
+
+  .stats-table{width:100%; border-collapse:collapse; font-size:.8rem;}
+  .stats-table th{
+    text-align:center; color:#94a3b8; font-weight:700; font-size:.65rem; letter-spacing:.03em;
+    text-transform:uppercase; padding:6px 4px; border-bottom:2px solid #e2e8f0; white-space:nowrap;
+  }
+  .stats-table td{
+    padding:10px 4px; text-align:center; border-bottom:1px solid #f1f5f9; font-weight:700; color:#334155; white-space:nowrap;
+  }
+  .stats-table th:nth-child(2), .stats-table td:nth-child(2){ text-align:left; }
+  .stats-table tr.top1 td{ background:linear-gradient(90deg,#fef9c3,#fde68a); }
+  .stats-table tr.me-row td{ background:#fff7ed; }
+  .stats-table .player-cell{ display:flex; align-items:center; gap:6px; font-weight:800; color:#1e1b4b; }
+  .stats-table .pts-cell{ font-weight:800; color:#1e1b4b; font-size:.92rem; }
+  .form-dot{
+    display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px;
+    border-radius:50%; font-size:.62rem; font-weight:800; margin:0 1px;
+  }
+  .form-win{ background:#dcfce7; color:#16a34a; }
+  .form-loss{ background:#fee2e2; color:#dc2626; }
   .spinner{width:34px; height:34px; border:4px solid #e2e8f0; border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin:20px auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
 </style>
@@ -1243,17 +1263,21 @@ function renderQuizResults(activeGame, myResult){
       `).join('') || `<p class="small-note">En attente des autres joueurs...</p>`;
     });
 
-  db.collection("meta").doc("season").onSnapshot(doc=>{
-    const season = doc.exists ? doc.data() : {totals:{}};
-    const ranking = Object.entries(season.totals || {}).sort((a,b)=>b[1].points-a[1].points);
-    const medals = ["🥇","🥈","🥉"];
-    document.getElementById("season-rank").innerHTML = ranking.length ? ranking.map(([name,d],i)=>`
-      <div class="rank-row ${name===myName?'me':''}">
-        <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
-        <div class="rank-name">${avatarFor(name)} ${name} <span style="color:#94a3b8;font-weight:500;">(${d.games} quiz)</span></div>
-        <div class="rank-score">${d.points} pts</div>
-      </div>
-    `).join('') : `<p class="small-note">Premier quiz de la saison !</p>`;
+  // Le classement est toujours recalculé à partir des parties réellement enregistrées
+  // dans "history" (jamais à partir d'un compteur qui pourrait dériver).
+  // On écoute meta/season juste comme signal "quelque chose vient de changer, recharge".
+  db.collection("meta").doc("season").onSnapshot(()=>{
+    const target = document.getElementById("season-rank");
+    if(!target) return;
+    db.collection("history").orderBy("createdAt","desc").limit(500).get()
+      .catch(()=> db.collection("history").limit(500).get())
+      .then(histSnap=>{
+        const historyItems = [];
+        histSnap.forEach(d=> historyItems.push(d.data()));
+        const stats = computeStats(historyItems);
+        const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
+        target.innerHTML = ranking.length ? renderSeasonTableHTML(ranking, stats.playerStats, myName) : `<p class="small-note">Premier quiz de la saison !</p>`;
+      });
   });
 }
 
@@ -1275,12 +1299,15 @@ function computeStats(historyItems){
   const quizItems = historyItems.filter(h=>h.mode === "quiz");
   const persoItems = historyItems.filter(h=>h.mode === "perso");
 
-  // Historique des scores par joueur, du plus récent au plus ancien
+  // Historique des scores par joueur, du plus récent au plus ancien (avec indicateur de victoire par partie)
   const playerScores = {};
   quizItems.forEach(h=>{
-    Object.entries(h.results || {}).forEach(([name,score])=>{
+    const entries = Object.entries(h.results || {});
+    if(!entries.length) return;
+    const maxScore = Math.max(...entries.map(([,s])=>s));
+    entries.forEach(([name,score])=>{
       if(!playerScores[name]) playerScores[name] = [];
-      playerScores[name].push({score, key:h.key, date:h.date});
+      playerScores[name].push({score, key:h.key, date:h.date, won: score === maxScore});
     });
   });
 
@@ -1305,16 +1332,7 @@ function computeStats(historyItems){
     });
   });
 
-  // Victoires (top score de chaque partie ; égalité = victoire partagée)
-  const wins = {};
-  quizItems.forEach(h=>{
-    const entries = Object.entries(h.results || {});
-    if(!entries.length) return;
-    const maxScore = Math.max(...entries.map(([,s])=>s));
-    entries.forEach(([name,s])=>{ if(s === maxScore) wins[name] = (wins[name] || 0) + 1; });
-  });
-
-  // Stats détaillées par joueur
+  // Stats détaillées par joueur (victoires et forme déduites des indicateurs "won" ci-dessus)
   const playerStats = {};
   Object.entries(playerScores).forEach(([name, arr])=>{
     const games = arr.length;
@@ -1322,12 +1340,13 @@ function computeStats(historyItems){
     const avg = totalPts / games;
     const accuracy = Math.round(avg / 10 * 100);
     const best = arr.reduce((a,b)=> b.score > a.score ? b : a, arr[0]);
+    const wins = arr.filter(x=>x.won).length;
     let progression = null;
     if(games >= 2){
       const latest = arr[0].score, prev = arr[1].score;
       progression = prev === 0 ? (latest > 0 ? 100 : 0) : Math.round((latest - prev) / prev * 100);
     }
-    playerStats[name] = { games, avg: Math.round(avg*10)/10, accuracy, best, progression, wins: wins[name] || 0, latest: arr[0] };
+    playerStats[name] = { games, points: totalPts, avg: Math.round(avg*10)/10, accuracy, best, progression, wins, last5: arr.slice(0,5), latest: arr[0] };
   });
 
   // Jeux de personnalité : profil le plus fréquent par jeu
@@ -1344,19 +1363,58 @@ function computeStats(historyItems){
           totalQuizGames: quizItems.length, totalPersoGames: persoItems.length};
 }
 
+/* Classement général sous forme de tableau, façon classement de championnat de foot.
+   ranking: [[name, {points, games}], ...] déjà trié. playerStats: optionnel (stats.playerStats). */
+function renderSeasonTableHTML(ranking, playerStats, highlightName){
+  if(!ranking.length) return `<p class="small-note">Pas encore de quiz joué.</p>`;
+  const medals = ["🥇","🥈","🥉"];
+  const rows = ranking.map(([name,d],i)=>{
+    const ps = playerStats ? playerStats[name] : null;
+    const avgTxt = ps ? ps.avg + '/10' : '—';
+    const bestTxt = ps ? ps.best.score + '/10' : '—';
+    const winsTxt = ps ? ps.wins : '—';
+    const last5 = ps ? ps.last5.slice().reverse() : [];
+    const formHTML = last5.length
+      ? last5.map(g=>`<span class="form-dot ${g.won?'form-win':'form-loss'}">${g.won?'✓':'✕'}</span>`).join('')
+      : '<span style="color:#cbd5e1;">—</span>';
+    return `
+      <tr class="${i===0?'top1':''} ${name===highlightName?'me-row':''}">
+        <td>${medals[i] || (i+1)}</td>
+        <td><div class="player-cell">${avatarFor(name)} ${name}</div></td>
+        <td>${d.games}</td>
+        <td>${avgTxt}</td>
+        <td>${bestTxt}</td>
+        <td>${winsTxt}</td>
+        <td>${formHTML}</td>
+        <td class="pts-cell">${d.points}</td>
+      </tr>
+    `;
+  }).join('');
+  return `
+    <div style="overflow-x:auto; margin-bottom:6px;">
+      <table class="stats-table">
+        <thead><tr>
+          <th>#</th><th>Joueur</th><th>J</th><th>Moy</th><th>Meill.</th><th>Vict.</th><th>5 derniers</th><th>Pts</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
 /* ============== ECRAN : HISTORIQUE & STATISTIQUES (ACCESSIBLE A TOUS) ============== */
 function renderHistoryScreen(){
   el.innerHTML = `<div class="spinner"></div><p class="subtitle">Chargement des statistiques...</p>`;
-  Promise.all([
-    db.collection("meta").doc("season").get(),
-    db.collection("history").orderBy("createdAt","desc").limit(60).get().catch(()=> db.collection("history").limit(60).get())
-  ]).then(([seasonSnap, histSnap])=>{
-    const season = seasonSnap.exists ? seasonSnap.data() : {totals:{}};
-    const ranking = Object.entries(season.totals || {}).sort((a,b)=>b[1].points-a[1].points);
+  // Tout est recalculé à partir des parties réellement présentes dans "history"
+  // (jamais depuis un compteur séparé qui pourrait dériver de la réalité).
+  db.collection("history").orderBy("createdAt","desc").limit(500).get()
+    .catch(()=> db.collection("history").limit(500).get())
+    .then(histSnap=>{
     const medals = ["🥇","🥈","🥉"];
     const historyItems = [];
     histSnap.forEach(doc=> historyItems.push(doc.data()));
     const stats = computeStats(historyItems);
+    const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
     const topThemeLabel = stats.topTheme ? (THEMES[stats.topTheme] ? THEMES[stats.topTheme].label : stats.topTheme) : null;
 
     const statsRanking = Object.entries(stats.playerStats).sort((a,b)=> b[1].avg - a[1].avg);
@@ -1386,13 +1444,8 @@ function renderHistoryScreen(){
       </div>
 
       <div class="section-title">Classement général de la saison</div>
-      ${ranking.length ? ranking.map(([name,d],i)=>`
-        <div class="rank-row ${i===0?'top1':''}">
-          <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
-          <div class="rank-name">${avatarFor(name)} ${name} <span style="color:#94a3b8;font-weight:500;">(${d.games} quiz)</span></div>
-          <div class="rank-score">${d.points} pts</div>
-        </div>
-      `).join('') : `<p class="small-note">Pas encore de quiz joué.</p>`}
+      ${renderSeasonTableHTML(ranking, stats.playerStats, myName)}
+      <p class="small-note" style="margin-top:0;">J = parties jouées · Moy = score moyen · Meill. = meilleur score · Vict. = victoires de partie · 5 derniers = ✓ gagné / ✕ pas gagné</p>
 
       <div class="section-title">Progression par joueur</div>
       ${statsRanking.length ? statsRanking.map(([name,s])=>{
