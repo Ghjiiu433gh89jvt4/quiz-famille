@@ -891,7 +891,15 @@ let currentActiveGame = null;
 let quizState = null; // {activeGame, qIndex, answers}
 let persoState = null; // {activeGame, qIndex, tally}
 let liveResultsUnsub = null;
+let historySnapUnsub = null; // écoute temps réel de la page stats/historique (📊)
 let db, auth;
+
+/* Coupe les écoutes temps réel propres à un écran, avant d'en afficher un autre
+   (évite qu'un ancien écouteur "stats" ou "classement du jeu" écrase l'écran actuel). */
+function stopScreenListeners(){
+  if(liveResultsUnsub){ liveResultsUnsub(); liveResultsUnsub = null; }
+  if(historySnapUnsub){ historySnapUnsub(); historySnapUnsub = null; }
+}
 
 /* ============== DEMARRAGE / FIREBASE ============== */
 function isConfigMissing(){
@@ -974,8 +982,9 @@ function attachTopbar(){
     </div>
   `;
   document.getElementById("tb-history").addEventListener("click", renderHistoryScreen);
-  document.getElementById("tb-admin").addEventListener("click", renderAdminPinGate);
+  document.getElementById("tb-admin").addEventListener("click", ()=>{ stopScreenListeners(); renderAdminPinGate(); });
   document.getElementById("tb-switch").addEventListener("click", ()=>{
+    stopScreenListeners();
     localStorage.removeItem("qf_playerName");
     myName = null;
     renderNamePicker();
@@ -1034,7 +1043,7 @@ function attachStateListener(){
 
 function handleActiveGame(activeGame){
   currentActiveGame = activeGame;
-  if(liveResultsUnsub){ liveResultsUnsub(); liveResultsUnsub = null; }
+  stopScreenListeners();
   if(!activeGame){
     renderWaiting();
     return;
@@ -1272,40 +1281,70 @@ function renderQuizResults(activeGame, myResult){
     <div id="season-rank"><div class="spinner"></div></div>
   `;
 
-  if(liveResultsUnsub){ liveResultsUnsub(); }
+  stopScreenListeners();
+
+  // Le classement de saison est toujours recalculé à partir des parties réellement
+  // enregistrées dans "history" (jamais à partir d'un compteur qui pourrait dériver),
+  // + la partie en cours (pas encore archivée) pour un classement 100% temps réel :
+  // dès qu'un joueur termine, tout le monde voit son classement se mettre à jour.
+  let cachedHistory = [];
+  let liveGameResults = {};
+
+  function renderSeasonBlock(){
+    const target = document.getElementById("season-rank");
+    if(!target) return;
+    let historyItems = dedupeHistory(cachedHistory);
+    if(Object.keys(liveGameResults).length && !historyItems.some(h=>h.gameId === activeGame.id)){
+      historyItems = [{
+        mode:"quiz", key:activeGame.key, date:todayStr(), results:liveGameResults,
+        gameId:activeGame.id, createdAt:{toMillis:()=>Date.now()}
+      }, ...historyItems];
+    }
+    const stats = computeStats(historyItems);
+    const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
+    target.innerHTML = ranking.length ? renderSeasonTableHTML(ranking, stats.playerStats, myName) : `<p class="small-note">Premier quiz de la saison !</p>`;
+  }
+
+  historySnapUnsub = db.collection("history").orderBy("createdAt","desc").limit(500)
+    .onSnapshot(histSnap=>{
+      cachedHistory = [];
+      histSnap.forEach(d=> cachedHistory.push(d.data()));
+      renderSeasonBlock();
+    }, ()=>{
+      db.collection("history").limit(500).get().then(histSnap=>{
+        cachedHistory = [];
+        histSnap.forEach(d=> cachedHistory.push(d.data()));
+        renderSeasonBlock();
+      });
+    });
+
   liveResultsUnsub = db.collection("liveResults").where("gameId","==",activeGame.id)
     .onSnapshot(snap=>{
       const rows = [];
-      snap.forEach(doc=> rows.push(doc.data()));
+      liveGameResults = {};
+      snap.forEach(doc=>{
+        const data = doc.data();
+        rows.push(data);
+        liveGameResults[data.player] = data.score;
+      });
       rows.sort((a,b)=> b.score - a.score);
       const medals = ["🥇","🥈","🥉"];
       const maxScore = 10;
-      document.getElementById("live-rank").innerHTML = rows.map((r,i)=>`
-        <div class="rank-row ${i===0?'top1':''} ${r.player===myName?'me':''}">
-          <div class="rank-bar" style="width:${(r.score/maxScore*100)}%"></div>
-          <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
-          <div class="rank-name">${avatarFor(r.player)} ${r.player}</div>
-          <div class="rank-score">${r.score}/10</div>
-        </div>
-      `).join('') || `<p class="small-note">En attente des autres joueurs...</p>`;
+      const liveTarget = document.getElementById("live-rank");
+      if(liveTarget){
+        liveTarget.innerHTML = rows.map((r,i)=>`
+          <div class="rank-row ${i===0?'top1':''} ${r.player===myName?'me':''}">
+            <div class="rank-bar" style="width:${(r.score/maxScore*100)}%"></div>
+            <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
+            <div class="rank-name">${avatarFor(r.player)} ${r.player}</div>
+            <div class="rank-score">${r.score}/10</div>
+          </div>
+        `).join('') || `<p class="small-note">En attente des autres joueurs...</p>`;
+      }
+      // Un joueur vient de terminer (ou de rejoindre) : le classement de saison se
+      // recalcule immédiatement, sans attendre l'archivage de la partie par l'admin.
+      renderSeasonBlock();
     });
-
-  // Le classement est toujours recalculé à partir des parties réellement enregistrées
-  // dans "history" (jamais à partir d'un compteur qui pourrait dériver).
-  // On écoute meta/season juste comme signal "quelque chose vient de changer, recharge".
-  db.collection("meta").doc("season").onSnapshot(()=>{
-    const target = document.getElementById("season-rank");
-    if(!target) return;
-    db.collection("history").orderBy("createdAt","desc").limit(500).get()
-      .catch(()=> db.collection("history").limit(500).get())
-      .then(histSnap=>{
-        const historyItems = [];
-        histSnap.forEach(d=> historyItems.push(d.data()));
-        const stats = computeStats(dedupeHistory(historyItems));
-        const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
-        target.innerHTML = ranking.length ? renderSeasonTableHTML(ranking, stats.playerStats, myName) : `<p class="small-note">Premier quiz de la saison !</p>`;
-      });
-  });
 }
 
 function renderPersoResult(activeGame, myResult){
@@ -1453,15 +1492,48 @@ function renderSeasonTableHTML(ranking, playerStats, highlightName){
 /* ============== ECRAN : HISTORIQUE & STATISTIQUES (ACCESSIBLE A TOUS) ============== */
 function renderHistoryScreen(){
   el.innerHTML = `<div class="spinner"></div><p class="subtitle">Chargement des statistiques...</p>`;
+  stopScreenListeners();
+
   // Tout est recalculé à partir des parties réellement présentes dans "history"
-  // (jamais depuis un compteur séparé qui pourrait dériver de la réalité).
-  db.collection("history").orderBy("createdAt","desc").limit(500).get()
-    .catch(()=> db.collection("history").limit(500).get())
-    .then(histSnap=>{
+  // (jamais depuis un compteur séparé qui pourrait dériver de la réalité), et cet
+  // écran écoute en temps réel : dès qu'une partie est archivée, ou que quelqu'un
+  // termine la partie en cours, les stats et le classement se mettent à jour seuls.
+  let rawHistoryItems = [];
+  let liveGameResults = {};
+  let liveGameInfo = null; // {key, gameId} de la partie en cours, si il y en a une
+
+  if(currentActiveGame && currentActiveGame.mode === "quiz"){
+    liveGameInfo = {key: currentActiveGame.key, gameId: currentActiveGame.id};
+    liveResultsUnsub = db.collection("liveResults").where("gameId","==",currentActiveGame.id)
+      .onSnapshot(snap=>{
+        liveGameResults = {};
+        snap.forEach(doc=>{ const d = doc.data(); liveGameResults[d.player] = d.score; });
+        renderScreenFromData();
+      });
+  }
+
+  historySnapUnsub = db.collection("history").orderBy("createdAt","desc").limit(500)
+    .onSnapshot(histSnap=>{
+      rawHistoryItems = [];
+      histSnap.forEach(doc=> rawHistoryItems.push(doc.data()));
+      renderScreenFromData();
+    }, ()=>{
+      db.collection("history").limit(500).get().then(histSnap=>{
+        rawHistoryItems = [];
+        histSnap.forEach(doc=> rawHistoryItems.push(doc.data()));
+        renderScreenFromData();
+      });
+    });
+
+  function renderScreenFromData(){
     const medals = ["🥇","🥈","🥉"];
-    const rawHistoryItems = [];
-    histSnap.forEach(doc=> rawHistoryItems.push(doc.data()));
-    const historyItems = dedupeHistory(rawHistoryItems);
+    let historyItems = dedupeHistory(rawHistoryItems);
+    if(liveGameInfo && Object.keys(liveGameResults).length && !historyItems.some(h=>h.gameId === liveGameInfo.gameId)){
+      historyItems = [{
+        mode:"quiz", key:liveGameInfo.key, date:todayStr(), results:liveGameResults,
+        gameId:liveGameInfo.gameId, createdAt:{toMillis:()=>Date.now()}
+      }, ...historyItems];
+    }
     const stats = computeStats(historyItems);
     const ranking = Object.entries(stats.playerStats).map(([name,ps])=>[name, {points:ps.points, games:ps.games}]).sort((a,b)=>b[1].points-a[1].points);
     const topThemeLabel = stats.topTheme ? (THEMES[stats.topTheme] ? THEMES[stats.topTheme].label : stats.topTheme) : null;
@@ -1561,7 +1633,7 @@ function renderHistoryScreen(){
     document.getElementById("back-btn").addEventListener("click", ()=>{
       handleActiveGame(currentActiveGame);
     });
-  });
+  }
 }
 
 /* ============================================================
