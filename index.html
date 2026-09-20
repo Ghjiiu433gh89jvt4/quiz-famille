@@ -51,8 +51,9 @@
   .topbar .me{display:flex; align-items:center; gap:8px;}
   .topbar .avatar{
     width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold2));
-    display:flex; align-items:center; justify-content:center; font-size:1rem;
+    display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden;
   }
+  .avatar-fill-img{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; }
   .topbar button{
     background:rgba(56,189,248,.12); border:1px solid var(--line); color:#eaf4ff; border-radius:10px;
     padding:7px 10px; cursor:pointer; font-size:1rem;
@@ -169,7 +170,7 @@
   .podium-medal{ font-size:1.2rem; margin-bottom:2px; min-height:1.4rem; }
   .podium-avatar{
     width:52px; height:52px; border-radius:50%; margin:0 auto 8px; font-size:1.7rem;
-    display:flex; align-items:center; justify-content:center;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
     background:linear-gradient(160deg,rgba(56,189,248,.25),rgba(8,26,58,.7)); border:1.5px solid var(--line);
   }
   .podium-card.lead .podium-avatar{ border-color:var(--gold); box-shadow:0 0 14px rgba(251,191,36,.5); }
@@ -292,7 +293,29 @@ const PIN_CODE = "1991";
 const PLAYER_AVATARS = {
   "Jopa":"🦉", "Majes":"🦁", "Thurell":"🐯", "Bambi":"🐻", "Sorel":"🐺"
 };
+/* Vraies photos des joueurs, hébergées dans le même dépôt GitHub que ce fichier */
+const PLAYER_PHOTOS = {
+  "Jopa":"https://raw.githubusercontent.com/Ghjiiu433gh89jvt4/quiz-famille/main/jopa.jpg.jpeg",
+  "Majes":"https://raw.githubusercontent.com/Ghjiiu433gh89jvt4/quiz-famille/main/majes.jpg.jpeg",
+  "Thurell":"https://raw.githubusercontent.com/Ghjiiu433gh89jvt4/quiz-famille/main/thurell.jpg.jpeg",
+  "Bambi":"https://raw.githubusercontent.com/Ghjiiu433gh89jvt4/quiz-famille/main/bambi.jpg.jpeg",
+  "Sorel":"https://raw.githubusercontent.com/Ghjiiu433gh89jvt4/quiz-famille/main/sorel.jpg.jpeg"
+};
 function avatarFor(name){ return PLAYER_AVATARS[name] || "🙂"; }
+/* Avatar qui remplit entièrement son conteneur déjà dimensionné/arrondi
+   (ex: .avatar, .podium-avatar) : photo si dispo, sinon emoji de secours. */
+function avatarFill(name){
+  const photo = PLAYER_PHOTOS[name];
+  if(photo) return `<img class="avatar-fill-img" src="${photo}" alt="${name}" loading="lazy">`;
+  return avatarFor(name);
+}
+/* Avatar autonome de taille fixe (px), utilisable n'importe où dans le HTML
+   sans conteneur pré-dimensionné : photo circulaire si dispo, sinon emoji. */
+function avatarBadge(name, px){
+  const photo = PLAYER_PHOTOS[name];
+  if(photo) return `<img src="${photo}" alt="${name}" loading="lazy" style="width:${px}px;height:${px}px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;">`;
+  return `<span style="display:inline-block;width:${px}px;height:${px}px;line-height:${px}px;text-align:center;font-size:${Math.round(px*0.6)}px;vertical-align:middle;">${avatarFor(name)}</span>`;
+}
 
 /* Logo circulaire "Les MESSI" façon générique de jeu télé (voir écrans d'accueil/attente) */
 function renderLogoBadge(size){
@@ -1615,7 +1638,7 @@ function attachTopbar(){
   topbarEl.classList.remove("hidden");
   topbarEl.innerHTML = `
     <div class="me">
-      <div class="avatar">${avatarFor(myName)}</div>
+      <div class="avatar">${avatarFill(myName)}</div>
       <span>${myName}</span>
     </div>
     <div style="display:flex; gap:6px;">
@@ -1664,7 +1687,7 @@ function renderNamePicker(){
     <h1>Bienvenue !</h1>
     <p class="subtitle">Qui es-tu ?</p>
     <div class="name-grid" id="name-grid">
-      ${DEFAULT_PLAYERS.map(p=>`<div class="name-btn" data-name="${p}"><span class="emoji">${avatarFor(p)}</span>${p}</div>`).join('')}
+      ${DEFAULT_PLAYERS.map(p=>`<div class="name-btn" data-name="${p}"><div style="margin:0 auto 4px;">${avatarBadge(p,48)}</div>${p}</div>`).join('')}
     </div>
     <label>Ou un autre prénom</label>
     <input type="text" id="custom-name" placeholder="Ton prénom">
@@ -1958,7 +1981,7 @@ function renderQuizResults(activeGame, myResult){
         liveTarget.innerHTML = rows.length ? `<div class="podium-row">${rows.map((r,i)=>`
           <div class="podium-card ${i===0 && rows.length>1?'lead':''} ${r.player===myName?'me':''}">
             <div class="podium-medal">${medals[i] || ''}</div>
-            <div class="podium-avatar">${avatarFor(r.player)}</div>
+            <div class="podium-avatar">${avatarFill(r.player)}</div>
             <div class="podium-name">${r.player}</div>
             <div class="podium-score">${r.score}<span>/10</span></div>
           </div>
@@ -2067,7 +2090,7 @@ function renderSeasonTableHTML(ranking, playerStats, highlightName){
     return `
       <tr class="${i===0?'top1':''} ${name===highlightName?'me-row':''}">
         <td>${medals[i] || (i+1)}</td>
-        <td><div class="player-cell">${avatarFor(name)} ${name}</div></td>
+        <td><div class="player-cell">${avatarBadge(name,22)} ${name}</div></td>
         <td>${d.games}</td>
         <td>${avgTxt}</td>
         <td>${bestTxt}</td>
@@ -2187,7 +2210,7 @@ function renderHistoryScreen(){
         return `
           <div class="player-stat-card">
             <div class="player-stat-head">
-              <div class="avatar" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fb923c);display:flex;align-items:center;justify-content:center;font-size:.9rem;">${avatarFor(name)}</div>
+              <div class="avatar" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fb923c);display:flex;align-items:center;justify-content:center;font-size:.9rem;overflow:hidden;">${avatarFill(name)}</div>
               <span class="name">${name}</span>
               ${trendHTML}
             </div>
