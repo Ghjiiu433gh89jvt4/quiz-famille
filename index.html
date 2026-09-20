@@ -9,181 +9,225 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#1e1b4b; --bg2:#3730a3; --bg3:#0f172a;
-    --accent:#f59e0b; --accent2:#fb923c; --good:#22c55e;
-    --danger:#ef4444; --card:#ffffff; --text:#1e293b; --muted:#64748b;
+    --bg1:#020611; --bg2:#081a3a; --bg3:#0b2a52;
+    --accent:#38bdf8; --accent2:#22d3ee; --gold:#fbbf24; --gold2:#f59e0b;
+    --good:#22c55e; --danger:#ef4444;
+    --card:linear-gradient(170deg,#0c1f42,#050f22 65%);
+    --panel:rgba(56,189,248,.08);
+    --text:#eaf4ff; --muted:#8fa8cf; --line:rgba(56,189,248,.35);
   }
   *{box-sizing:border-box;}
   html, body{ height:100%; }
   body{
     margin:0; min-height:100vh; font-family:'Poppins',Roboto,Arial,sans-serif;
     background:
-      radial-gradient(circle at 15% 15%, rgba(245,158,11,.22), transparent 40%),
-      radial-gradient(circle at 85% 25%, rgba(99,102,241,.32), transparent 45%),
-      radial-gradient(circle at 50% 90%, rgba(34,197,94,.16), transparent 40%),
-      linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));
+      radial-gradient(circle at 20% 10%, rgba(56,189,248,.25), transparent 42%),
+      radial-gradient(circle at 85% 20%, rgba(34,211,238,.18), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(11,42,82,.6), transparent 55%),
+      linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));
     background-attachment:fixed;
     display:flex; align-items:center; justify-content:center; padding:20px;
     color:var(--text);
     position:relative; overflow-x:hidden;
   }
   body::before, body::after{
-    content:""; position:fixed; width:520px; height:520px; border-radius:50%;
-    filter:blur(100px); z-index:0; pointer-events:none; opacity:.5;
-    animation:floatBlob 20s ease-in-out infinite;
+    content:""; position:fixed; width:480px; height:480px; border-radius:50%;
+    filter:blur(110px); z-index:0; pointer-events:none; opacity:.35;
+    animation:floatBlob 22s ease-in-out infinite;
   }
-  body::before{ background:#f59e0b; top:-180px; left:-160px; }
-  body::after{ background:#6366f1; bottom:-180px; right:-160px; animation-delay:-10s; }
+  body::before{ background:#0ea5e9; top:-160px; left:-140px; }
+  body::after{ background:#22d3ee; bottom:-160px; right:-140px; animation-delay:-11s; }
   @keyframes floatBlob{
     0%,100%{ transform:translate(0,0) scale(1); }
-    50%{ transform:translate(70px,50px) scale(1.2); }
+    50%{ transform:translate(60px,40px) scale(1.15); }
   }
   .app{width:100%; max-width:600px; position:relative; z-index:1;}
   .topbar{
     display:flex; align-items:center; justify-content:space-between;
     padding:10px 18px; margin-bottom:12px; border-radius:16px;
-    background:rgba(255,255,255,.12); backdrop-filter:blur(8px);
-    color:#fff; font-size:.85rem; font-weight:600;
+    background:rgba(8,26,58,.55); border:1px solid var(--line); backdrop-filter:blur(8px);
+    color:#eaf4ff; font-size:.85rem; font-weight:600;
   }
   .topbar .me{display:flex; align-items:center; gap:8px;}
   .topbar .avatar{
-    width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2));
+    width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold2));
     display:flex; align-items:center; justify-content:center; font-size:1rem;
   }
   .topbar button{
-    background:rgba(255,255,255,.15); border:none; color:#fff; border-radius:10px;
+    background:rgba(56,189,248,.12); border:1px solid var(--line); color:#eaf4ff; border-radius:10px;
     padding:7px 10px; cursor:pointer; font-size:1rem;
   }
-  .topbar button:hover{background:rgba(255,255,255,.28);}
+  .topbar button:hover{background:rgba(56,189,248,.24);}
   .card{
-    background:var(--card); border-radius:24px; padding:30px 26px;
-    box-shadow:0 25px 70px rgba(0,0,0,.4); animation:fadeIn .35s ease;
+    background:var(--card); border:1px solid var(--line); border-radius:24px; padding:30px 26px;
+    box-shadow:0 25px 70px rgba(0,0,0,.55), 0 0 40px rgba(56,189,248,.08) inset; animation:fadeIn .35s ease;
   }
   @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
   h1{
-    font-size:1.5rem; margin:0 0 4px; text-align:center; font-weight:800;
-    background:linear-gradient(135deg,#1e1b4b,#4338ca 60%,#6d28d9);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
+    font-size:1.5rem; margin:0 0 4px; text-align:center; font-weight:800; color:#eaf4ff;
+    text-shadow:0 0 18px rgba(56,189,248,.5);
   }
   .subtitle{text-align:center; color:var(--muted); margin:0 0 22px; font-size:.92rem;}
-  label{display:block; font-weight:600; margin:16px 0 8px; font-size:.9rem; color:#334155;}
+  label{display:block; font-weight:600; margin:16px 0 8px; font-size:.9rem; color:#bcd6f7;}
   select, input[type=text], input[type=password]{
-    width:100%; padding:12px 13px; border-radius:12px; border:1.5px solid #e2e8f0;
-    font-size:1rem; background:#f8fafc; font-family:inherit;
+    width:100%; padding:12px 13px; border-radius:999px; border:1.5px solid var(--line);
+    font-size:1rem; background:rgba(56,189,248,.06); color:#eaf4ff; font-family:inherit;
   }
+  select option{ background:#0b2140; color:#eaf4ff; }
   .theme-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .theme-btn{
-    border:2px solid #e2e8f0; background:#f8fafc; border-radius:16px; padding:16px 10px;
-    text-align:center; cursor:pointer; font-size:.95rem; font-weight:600; transition:.15s;
+    position:relative; border:1.5px solid var(--line); background:rgba(56,189,248,.06); border-radius:999px; padding:16px 12px;
+    text-align:center; cursor:pointer; font-size:.9rem; font-weight:600; transition:.15s; color:#eaf4ff;
   }
-  .theme-btn:hover{border-color:var(--accent); transform:translateY(-2px);}
-  .theme-btn.selected{border-color:var(--accent); background:linear-gradient(135deg,#fff7ed,#ffedd5); color:#b45309;}
-  .theme-btn{border-top-width:4px; border-top-style:solid;}
-  .option.selected-multi{border-color:var(--accent); background:#fff7ed;}
+  .theme-btn:hover{border-color:var(--accent); transform:translateY(-2px); box-shadow:0 0 16px rgba(56,189,248,.35);}
+  .theme-btn.selected{border-color:var(--gold); background:rgba(251,191,36,.14); color:var(--gold); box-shadow:0 0 18px rgba(251,191,36,.35);}
+  .theme-btn{border-top-width:3px; border-top-style:solid;}
+  .option.selected-multi{border-color:var(--gold); background:rgba(251,191,36,.12); color:var(--gold);}
   .name-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
   .name-btn{
-    border:2px solid #e2e8f0; background:#f8fafc; border-radius:16px; padding:18px 10px;
-    text-align:center; cursor:pointer; font-weight:700; transition:.15s; font-size:1.02rem;
+    border:1.5px solid var(--line); background:rgba(56,189,248,.06); border-radius:999px; padding:18px 10px;
+    text-align:center; cursor:pointer; font-weight:700; transition:.15s; font-size:1.02rem; color:#eaf4ff;
   }
   .name-btn .emoji{font-size:1.8rem; display:block; margin-bottom:4px;}
-  .name-btn:hover{border-color:var(--accent); transform:translateY(-2px);}
-  .name-btn.selected{border-color:var(--accent); background:linear-gradient(135deg,#fff7ed,#ffedd5);}
+  .name-btn:hover{border-color:var(--accent); transform:translateY(-2px); box-shadow:0 0 16px rgba(56,189,248,.35);}
+  .name-btn.selected{border-color:var(--gold); background:rgba(251,191,36,.14); box-shadow:0 0 18px rgba(251,191,36,.35);}
   .players{display:flex; flex-direction:column; gap:8px;}
   .player-row{
-    display:flex; align-items:center; gap:10px; background:#f8fafc; border:1.5px solid #e2e8f0;
-    border-radius:12px; padding:10px 12px;
+    display:flex; align-items:center; gap:10px; background:rgba(56,189,248,.06); border:1.5px solid var(--line);
+    border-radius:999px; padding:10px 16px;
   }
   .player-row input[type=checkbox]{width:18px; height:18px;}
   .player-row span{font-weight:600;}
   .btn{
-    display:block; width:100%; padding:15px; border:none; border-radius:14px;
+    display:block; width:100%; padding:15px; border:none; border-radius:999px;
     font-size:1.05rem; font-weight:700; cursor:pointer; margin-top:18px; transition:.15s;
   }
-  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#1e1b4b; box-shadow:0 8px 20px rgba(245,158,11,.35);}
+  .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#1e1b4b; box-shadow:0 8px 24px rgba(251,191,36,.4);}
   .btn-primary:hover{filter:brightness(1.05); transform:translateY(-1px);}
-  .btn-primary:disabled{opacity:.45; cursor:not-allowed; box-shadow:none; transform:none;}
-  .btn-secondary{background:#eef2ff; color:#3730a3;}
-  .btn-danger{background:#fee2e2; color:#b91c1c;}
-  .btn-link{display:block; width:100%; text-align:center; background:none; border:none; color:#6366f1; text-decoration:underline; padding:10px; font-weight:600; cursor:pointer; font-size:.92rem;}
+  .btn-primary:disabled{opacity:.4; cursor:not-allowed; box-shadow:none; transform:none;}
+  .btn-secondary{background:rgba(56,189,248,.14); color:#eaf4ff; border:1px solid var(--line);}
+  .btn-danger{background:rgba(239,68,68,.16); color:#fca5a5; border:1px solid rgba(239,68,68,.4);}
+  .btn-link{display:block; width:100%; text-align:center; background:none; border:none; color:var(--accent); text-decoration:underline; padding:10px; font-weight:600; cursor:pointer; font-size:.92rem;}
   .footer-actions{display:flex; gap:10px; margin-top:20px;}
   .footer-actions .btn{margin-top:0;}
 
   .intro-avatar{font-size:3.4rem; text-align:center; margin-bottom:6px;}
-  .intro-name{text-align:center; font-size:1.6rem; font-weight:800; color:#1e1b4b; margin-bottom:6px;}
+  .intro-name{text-align:center; font-size:1.6rem; font-weight:800; color:#eaf4ff; margin-bottom:6px; text-shadow:0 0 16px rgba(56,189,248,.45);}
   .intro-hint{text-align:center; color:var(--muted); margin-bottom:6px; font-size:.92rem;}
 
-  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  /* Logo circulaire "Les MESSI" façon générique jeu télé */
+  .qpuc-logo{ display:flex; justify-content:center; margin:0 auto 14px; filter:drop-shadow(0 0 18px rgba(56,189,248,.45)); }
+
+  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
   .quiz-progress{font-size:.85rem; color:var(--muted); font-weight:600;}
-  .timer-badge{
-    font-weight:800; font-size:1.05rem; padding:5px 13px; border-radius:20px;
-    background:#eef2ff; color:#4338ca; min-width:52px; text-align:center;
+  .timer-gauge{ position:relative; width:54px; height:54px; flex-shrink:0; }
+  .timer-gauge svg{ transform:rotate(-90deg); overflow:visible; }
+  .timer-track{ fill:none; stroke:rgba(56,189,248,.18); stroke-width:6; }
+  .timer-fill{ fill:none; stroke:var(--accent); stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke .3s; }
+  .timer-fill.warn{ stroke:var(--danger); }
+  .timer-number{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; color:#eaf4ff; }
+  .timer-number.warn{ color:#fca5a5; }
+  .progress-bar-bg{width:100%; height:6px; background:rgba(56,189,248,.15); border-radius:8px; overflow:hidden; margin-bottom:20px;}
+  .progress-bar-fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width .3s linear;}
+  .question-pill{
+    position:relative; text-align:center; font-size:1.1rem; font-weight:700; margin:0 0 20px; color:#eaf4ff; line-height:1.4;
+    background:linear-gradient(180deg,rgba(56,189,248,.16),rgba(8,26,58,.6)); border:1.5px solid var(--line);
+    border-radius:999px; padding:16px 22px;
   }
-  .timer-badge.warn{background:#fee2e2; color:#b91c1c;}
-  .progress-bar-bg{width:100%; height:8px; background:#e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:20px;}
-  .progress-bar-fill{height:100%; background:linear-gradient(90deg,#22c55e,#f59e0b); transition:width .3s linear;}
-  .question-text{font-size:1.15rem; font-weight:700; margin-bottom:18px; color:#1e1b4b; line-height:1.4;}
+  .question-pill::before, .question-pill::after{
+    content:""; position:absolute; top:50%; width:22px; height:2px; background:linear-gradient(90deg,var(--accent),transparent);
+    transform:translateY(-50%);
+  }
+  .question-pill::before{ left:-20px; }
+  .question-pill::after{ right:-20px; background:linear-gradient(90deg,transparent,var(--accent)); }
   .options{display:flex; flex-direction:column; gap:10px;}
   .option{
-    text-align:left; padding:14px 16px; border-radius:14px; border:2px solid #e2e8f0;
-    background:#f8fafc; cursor:pointer; font-size:.98rem; font-weight:600; color:#334155;
+    position:relative; display:flex; align-items:center; gap:10px;
+    text-align:left; padding:13px 18px; border-radius:999px; border:1.5px solid var(--line);
+    background:rgba(56,189,248,.06); cursor:pointer; font-size:.96rem; font-weight:600; color:#eaf4ff;
     transition:.12s;
   }
-  .option:hover{border-color:#a5b4fc; transform:translateX(2px);}
-  .option.correct{background:#dcfce7; border-color:#22c55e; color:#166534;}
-  .option.wrong{background:#fee2e2; border-color:#ef4444; color:#991b1b;}
+  .option-letter{
+    flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+    border-radius:50%; background:rgba(251,191,36,.16); color:var(--gold); font-weight:800; font-size:.82rem;
+  }
+  .option:hover{border-color:var(--accent); transform:translateX(2px); box-shadow:0 0 14px rgba(56,189,248,.3);}
+  .option.correct{background:rgba(34,197,94,.18); border-color:#22c55e; color:#bbf7d0; box-shadow:0 0 16px rgba(34,197,94,.4);}
+  .option.correct .option-letter{ background:rgba(34,197,94,.3); color:#bbf7d0; }
+  .option.wrong{background:rgba(239,68,68,.18); border-color:#ef4444; color:#fecaca; box-shadow:0 0 16px rgba(239,68,68,.4);}
+  .option.wrong .option-letter{ background:rgba(239,68,68,.3); color:#fecaca; }
   .option.disabled{pointer-events:none;}
 
-  .rank-row{
-    display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px;
-    background:#f8fafc; margin-bottom:8px; position:relative; overflow:hidden;
+  /* Classement du jeu en direct : avatars alignés + score en dessous */
+  .podium-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:6px; }
+  .podium-card{
+    flex:1 1 90px; min-width:82px; max-width:120px; text-align:center; padding:14px 8px 12px;
+    border-radius:18px; background:rgba(56,189,248,.07); border:1.5px solid var(--line); position:relative;
   }
-  .rank-row.me{border:2px solid var(--accent);}
-  .rank-row.top1{background:linear-gradient(90deg,#fef9c3,#fde68a);}
+  .podium-card.lead{ border-color:var(--gold); background:rgba(251,191,36,.12); box-shadow:0 0 22px rgba(251,191,36,.4); }
+  .podium-card.me{ border-color:var(--accent2); }
+  .podium-medal{ font-size:1.2rem; margin-bottom:2px; min-height:1.4rem; }
+  .podium-avatar{
+    width:52px; height:52px; border-radius:50%; margin:0 auto 8px; font-size:1.7rem;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg,rgba(56,189,248,.25),rgba(8,26,58,.7)); border:1.5px solid var(--line);
+  }
+  .podium-card.lead .podium-avatar{ border-color:var(--gold); box-shadow:0 0 14px rgba(251,191,36,.5); }
+  .podium-name{ font-size:.78rem; font-weight:700; color:#dbeafe; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .podium-score{ font-size:1.15rem; font-weight:800; color:var(--accent2); margin-top:2px; }
+  .podium-score span{ font-size:.68rem; color:var(--muted); font-weight:600; }
+
+  .rank-row{
+    display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:16px;
+    background:rgba(56,189,248,.06); border:1px solid var(--line); margin-bottom:8px; position:relative; overflow:hidden;
+  }
+  .rank-row.me{border:2px solid var(--gold);}
+  .rank-row.top1{background:rgba(251,191,36,.14); border-color:var(--gold);}
   .rank-medal{font-size:1.4rem; width:32px; text-align:center; z-index:1;}
-  .rank-name{flex:1; font-weight:700; z-index:1;}
-  .rank-score{font-weight:800; color:#1e1b4b; z-index:1;}
-  .rank-bar{position:absolute; left:0; top:0; bottom:0; background:rgba(245,158,11,.15); z-index:0; transition:width .5s ease;}
+  .rank-name{flex:1; font-weight:700; z-index:1; color:#eaf4ff;}
+  .rank-score{font-weight:800; color:var(--gold); z-index:1;}
+  .rank-bar{position:absolute; left:0; top:0; bottom:0; background:rgba(56,189,248,.15); z-index:0; transition:width .5s ease;}
   .badge-multi{display:block; text-align:center; margin-bottom:10px;}
   .section-title{font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:22px 0 10px; font-weight:700;}
   .small-note{font-size:.78rem; color:var(--muted); text-align:center; margin-top:14px;}
   .hidden{display:none !important;}
   .pin-input{text-align:center; font-size:1.6rem; letter-spacing:.4em; margin-top:14px;}
-  .pin-error{color:#b91c1c; text-align:center; margin-top:10px; font-size:.85rem; min-height:1em;}
-  .badge{display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; background:#eef2ff; color:#3730a3; margin-left:6px;}
+  .pin-error{color:#fca5a5; text-align:center; margin-top:10px; font-size:.85rem; min-height:1em;}
+  .badge{display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; background:rgba(56,189,248,.16); color:#bae6fd; margin-left:6px;}
   .kpi-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px;}
-  .kpi-card{background:#f8fafc; border-radius:14px; padding:14px 14px; border:1.5px solid #e2e8f0;}
-  .kpi-value{font-size:1.35rem; font-weight:800; color:#1e1b4b; line-height:1.2;}
-  .kpi-label{font-size:.76rem; color:#64748b; margin-top:2px;}
-  .player-stat-card{background:#f8fafc; border-radius:14px; padding:14px 16px; margin-bottom:8px; border:1.5px solid #e2e8f0;}
+  .kpi-card{background:rgba(56,189,248,.06); border-radius:14px; padding:14px 14px; border:1.5px solid var(--line);}
+  .kpi-value{font-size:1.35rem; font-weight:800; color:#eaf4ff; line-height:1.2;}
+  .kpi-label{font-size:.76rem; color:var(--muted); margin-top:2px;}
+  .player-stat-card{background:rgba(56,189,248,.06); border-radius:14px; padding:14px 16px; margin-bottom:8px; border:1.5px solid var(--line);}
   .player-stat-head{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
-  .player-stat-head .name{font-weight:800; flex:1;}
-  .player-stat-metrics{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; font-size:.78rem; color:#64748b; text-align:center;}
-  .player-stat-metrics b{display:block; font-size:1rem; color:#1e1b4b;}
-  .trend-up{color:#16a34a; font-weight:800;}
-  .trend-down{color:#dc2626; font-weight:800;}
+  .player-stat-head .name{font-weight:800; flex:1; color:#eaf4ff;}
+  .player-stat-metrics{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; font-size:.78rem; color:var(--muted); text-align:center;}
+  .player-stat-metrics b{display:block; font-size:1rem; color:#eaf4ff;}
+  .trend-up{color:#4ade80; font-weight:800;}
+  .trend-down{color:#f87171; font-weight:800;}
   .trend-flat{color:#94a3b8; font-weight:800;}
 
   .stats-table{width:100%; border-collapse:collapse; font-size:.8rem;}
   .stats-table th{
-    text-align:center; color:#94a3b8; font-weight:700; font-size:.65rem; letter-spacing:.03em;
-    text-transform:uppercase; padding:6px 4px; border-bottom:2px solid #e2e8f0; white-space:nowrap;
+    text-align:center; color:var(--muted); font-weight:700; font-size:.65rem; letter-spacing:.03em;
+    text-transform:uppercase; padding:6px 4px; border-bottom:2px solid var(--line); white-space:nowrap;
   }
   .stats-table td{
-    padding:10px 4px; text-align:center; border-bottom:1px solid #f1f5f9; font-weight:700; color:#334155; white-space:nowrap;
+    padding:10px 4px; text-align:center; border-bottom:1px solid rgba(56,189,248,.12); font-weight:700; color:#dbeafe; white-space:nowrap;
   }
   .stats-table th:nth-child(2), .stats-table td:nth-child(2){ text-align:left; }
   .stats-table th:nth-child(7), .stats-table td:nth-child(7){ text-align:left; }
-  .stats-table tr.top1 td{ background:linear-gradient(90deg,#fef9c3,#fde68a); }
-  .stats-table tr.me-row td{ background:#fff7ed; }
-  .stats-table .player-cell{ display:flex; align-items:center; gap:6px; font-weight:800; color:#1e1b4b; }
-  .stats-table .pts-cell{ font-weight:800; color:#1e1b4b; font-size:.92rem; }
+  .stats-table tr.top1 td{ background:rgba(251,191,36,.14); }
+  .stats-table tr.me-row td{ background:rgba(56,189,248,.1); }
+  .stats-table .player-cell{ display:flex; align-items:center; gap:6px; font-weight:800; color:#eaf4ff; }
+  .stats-table .pts-cell{ font-weight:800; color:var(--gold); font-size:.92rem; }
   .form-dot{
     display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px;
     padding:0 4px; border-radius:10px; font-size:.68rem; font-weight:800; margin:0 1px;
   }
-  .form-win{ background:#dcfce7; color:#16a34a; }
-  .form-loss{ background:#fee2e2; color:#dc2626; }
-  .spinner{width:34px; height:34px; border:4px solid #e2e8f0; border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin:20px auto;}
+  .form-win{ background:rgba(34,197,94,.2); color:#4ade80; }
+  .form-loss{ background:rgba(239,68,68,.2); color:#f87171; }
+  .spinner{width:34px; height:34px; border:4px solid rgba(56,189,248,.15); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite; margin:20px auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* ============== ADAPTATION MOBILE ============== */
@@ -198,7 +242,7 @@
     .subtitle{ font-size:.85rem; margin-bottom:18px; }
     .card{ padding:18px 14px 30px; }
     .theme-grid, .name-grid{ gap:8px; }
-    .theme-btn{ padding:13px 8px; font-size:.88rem; }
+    .theme-btn{ padding:13px 8px; font-size:.86rem; }
     .name-btn{ padding:14px 8px; font-size:.92rem; }
     .btn{ padding:14px; font-size:1rem; }
     .footer-actions{ flex-wrap:wrap; }
@@ -208,9 +252,11 @@
     .stats-table{ font-size:.72rem; }
     .stats-table th{ font-size:.6rem; padding:6px 3px; }
     .stats-table td{ padding:9px 3px; }
-    .question-text{ font-size:1.05rem; }
-    .option{ padding:12px 13px; font-size:.92rem; }
-    .timer-badge{ font-size:.95rem; padding:5px 10px; }
+    .question-pill{ font-size:1rem; padding:14px 16px; }
+    .option{ padding:12px 14px; font-size:.9rem; }
+    .podium-card{ min-width:72px; padding:10px 6px 8px; }
+    .podium-avatar{ width:44px; height:44px; font-size:1.4rem; }
+    .timer-gauge{ width:46px; height:46px; }
   }
 </style>
 </head>
@@ -244,9 +290,35 @@ const firebaseConfig = {
 const PIN_CODE = "1991";
 
 const PLAYER_AVATARS = {
-  "Jopa":"🦉", "Majes":"🦁", "Thurell":"🐯", "Bambi":"🐻"
+  "Jopa":"🦉", "Majes":"🦁", "Thurell":"🐯", "Bambi":"🐻", "Sorel":"🐺"
 };
 function avatarFor(name){ return PLAYER_AVATARS[name] || "🙂"; }
+
+/* Logo circulaire "Les MESSI" façon générique de jeu télé (voir écrans d'accueil/attente) */
+function renderLogoBadge(size){
+  const s = size || 130;
+  return `
+    <div class="qpuc-logo">
+      <svg width="${s}" height="${s}" viewBox="0 0 220 220">
+        <defs>
+          <path id="logoArcTop" d="M 34,120 A 80,80 0 0 1 186,120" fill="none"/>
+          <radialGradient id="logoGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#0c2547"/>
+            <stop offset="100%" stop-color="#020814"/>
+          </radialGradient>
+        </defs>
+        <circle cx="110" cy="110" r="104" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.5"/>
+        <circle cx="110" cy="110" r="94" fill="url(#logoGlow)" stroke="#38bdf8" stroke-width="5"/>
+        <circle cx="110" cy="110" r="76" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.6"/>
+        <text font-size="14" fill="#7dd3fc" font-weight="700" letter-spacing="3" font-family="'Poppins',sans-serif">
+          <textPath href="#logoArcTop" startOffset="50%" text-anchor="middle">★ QUIZ EN FAMILLE ★</textPath>
+        </text>
+        <text x="110" y="112" text-anchor="middle" font-size="30" font-weight="800" fill="#fbbf24" font-family="'Poppins',sans-serif">LES</text>
+        <text x="110" y="146" text-anchor="middle" font-size="30" font-weight="800" fill="#fbbf24" font-family="'Poppins',sans-serif">MESSI</text>
+      </svg>
+    </div>
+  `;
+}
 
 /* ============== BANQUE DE QUESTIONS (QUIZ CULTURE) ============== */
 const THEMES = {
@@ -503,6 +575,72 @@ const THEMES = {
     {q:"Sur le chemin de quelle ville l'apôtre Paul (alors nommé Saul) a-t-il sa vision qui le convertit au christianisme ?", options:["Damas","Jérusalem","Antioche","Éphèse"], correct:"Damas"},
     {q:"Quel est le dernier livre du Nouveau Testament ?", options:["L'Apocalypse (Révélation)","Les Actes des Apôtres","L'Épître de Jude","L'Évangile de Jean"], correct:"L'Apocalypse (Révélation)"},
     {q:"Combien de commandements Moïse reçoit-il sur les tables de pierre ?", options:["10","7","12","5"], correct:"10"}
+  ]},
+  cinema: { label:"🎬 Cinéma", emoji:"🎬", questions:[
+    {q:"Qui a réalisé « Pulp Fiction » (1994) ?", options:["Quentin Tarantino","Martin Scorsese","David Fincher","Steven Spielberg"], correct:"Quentin Tarantino"},
+    {q:"Quel film a remporté l'Oscar du meilleur film en 1995, battant « Pulp Fiction » ?", options:["Forrest Gump","Le Roi Lion","Quiz Show","Quatre mariages et un enterrement"], correct:"Forrest Gump"},
+    {q:"Quel réalisateur est connu pour la trilogie « Le Parrain » ?", options:["Francis Ford Coppola","Martin Scorsese","Brian De Palma","Sidney Lumet"], correct:"Francis Ford Coppola"},
+    {q:"Quel acteur incarne le capitaine Jack Sparrow dans « Pirates des Caraïbes » ?", options:["Johnny Depp","Orlando Bloom","Geoffrey Rush","Javier Bardem"], correct:"Johnny Depp"},
+    {q:"Quel est le premier long-métrage d'animation Pixar, sorti en 1995 ?", options:["Toy Story","Monstres & Cie","1001 Pattes","Le Monde de Nemo"], correct:"Toy Story"},
+    {q:"Qui a réalisé « Titanic » (1997) ?", options:["James Cameron","Ridley Scott","Michael Bay","Robert Zemeckis"], correct:"James Cameron"},
+    {q:"Quel acteur français partage l'affiche avec Omar Sy dans « Intouchables » (2011) ?", options:["François Cluzet","Gérard Depardieu","Jean Dujardin","Daniel Auteuil"], correct:"François Cluzet"},
+    {q:"Quel réalisateur est à l'origine de la saga « Star Wars » ?", options:["George Lucas","Steven Spielberg","James Cameron","Ridley Scott"], correct:"George Lucas"},
+    {q:"Quel film d'Alfred Hitchcock met en scène une attaque massive d'oiseaux sur une petite ville ?", options:["Les Oiseaux","Psychose","Fenêtre sur cour","Vertigo"], correct:"Les Oiseaux"},
+    {q:"Quel acteur incarne le Joker dans « The Dark Knight » (2008), lui valant un Oscar posthume ?", options:["Heath Ledger","Jack Nicholson","Joaquin Phoenix","Jared Leto"], correct:"Heath Ledger"},
+    {q:"Quel réalisateur japonais est célèbre pour des films d'animation comme « Le Voyage de Chihiro » ?", options:["Hayao Miyazaki","Isao Takahata","Makoto Shinkai","Satoshi Kon"], correct:"Hayao Miyazaki"},
+    {q:"En quelle année sort le tout premier film « Star Wars » (Un nouvel espoir) ?", options:["1977","1980","1975","1983"], correct:"1977"},
+    {q:"Quel acteur incarne le rôle-titre dans « Forrest Gump » (1994) ?", options:["Tom Hanks","Tom Cruise","Kevin Costner","Robin Williams"], correct:"Tom Hanks"},
+    {q:"Quel réalisateur français a signé « Le Fabuleux Destin d'Amélie Poulain » (2001) ?", options:["Jean-Pierre Jeunet","Luc Besson","Michel Gondry","Jacques Audiard"], correct:"Jean-Pierre Jeunet"},
+    {q:"Quel film sud-coréen remporte la Palme d'or au Festival de Cannes 2019 ?", options:["Parasite","Oldboy","Mother","The Handmaiden"], correct:"Parasite"},
+    {q:"Quel acteur incarne Tony Stark / Iron Man dans l'univers cinématographique Marvel ?", options:["Robert Downey Jr.","Chris Evans","Chris Hemsworth","Mark Ruffalo"], correct:"Robert Downey Jr."},
+    {q:"Quel film culte de 1999 met en scène une réalité simulée appelée « la Matrice » ?", options:["Matrix","Dark City","eXistenZ","Total Recall"], correct:"Matrix"},
+    {q:"Quel réalisateur est notamment connu pour « Inception » et « Interstellar » ?", options:["Christopher Nolan","Denis Villeneuve","David Fincher","Ridley Scott"], correct:"Christopher Nolan"},
+    {q:"Quelle actrice française incarne Édith Piaf dans « La Môme » (2007), un rôle qui lui vaut l'Oscar de la meilleure actrice ?", options:["Marion Cotillard","Audrey Tautou","Juliette Binoche","Léa Seydoux"], correct:"Marion Cotillard"},
+    {q:"Quel est le premier long-métrage d'animation en couleur de l'histoire du cinéma, produit par Disney en 1937 ?", options:["Blanche-Neige et les Sept Nains","Pinocchio","Fantasia","Bambi"], correct:"Blanche-Neige et les Sept Nains"}
+  ]},
+  litterature: { label:"📚 Littérature", emoji:"📚", questions:[
+    {q:"Qui est l'auteur des « Misérables » ?", options:["Victor Hugo","Émile Zola","Honoré de Balzac","Gustave Flaubert"], correct:"Victor Hugo"},
+    {q:"Quel écrivain français est l'auteur du « Petit Prince » ?", options:["Antoine de Saint-Exupéry","Jules Verne","Marcel Pagnol","André Gide"], correct:"Antoine de Saint-Exupéry"},
+    {q:"Qui a écrit « Vingt mille lieues sous les mers » ?", options:["Jules Verne","H.G. Wells","Victor Hugo","Alexandre Dumas"], correct:"Jules Verne"},
+    {q:"Quelle autrice britannique a écrit la saga « Harry Potter » ?", options:["J.K. Rowling","Agatha Christie","Virginia Woolf","Jane Austen"], correct:"J.K. Rowling"},
+    {q:"Qui a écrit la tragédie « Roméo et Juliette » ?", options:["William Shakespeare","Christopher Marlowe","Molière","Racine"], correct:"William Shakespeare"},
+    {q:"Quel écrivain russe est l'auteur de « Guerre et Paix » ?", options:["Léon Tolstoï","Fiodor Dostoïevski","Anton Tchekhov","Nicolas Gogol"], correct:"Léon Tolstoï"},
+    {q:"Qui a écrit « L'Étranger », publié en 1942 ?", options:["Albert Camus","Jean-Paul Sartre","André Malraux","Simone de Beauvoir"], correct:"Albert Camus"},
+    {q:"Quel poète français est l'auteur du recueil « Les Fleurs du mal » ?", options:["Charles Baudelaire","Arthur Rimbaud","Paul Verlaine","Stéphane Mallarmé"], correct:"Charles Baudelaire"},
+    {q:"Qui est l'auteur de « Madame Bovary » ?", options:["Gustave Flaubert","Guy de Maupassant","Émile Zola","Stendhal"], correct:"Gustave Flaubert"},
+    {q:"Quel écrivain colombien a reçu le prix Nobel de littérature notamment pour « Cent ans de solitude » ?", options:["Gabriel García Márquez","Mario Vargas Llosa","Pablo Neruda","Jorge Luis Borges"], correct:"Gabriel García Márquez"},
+    {q:"Qui a écrit la pièce de théâtre « Cyrano de Bergerac » (1897) ?", options:["Edmond Rostand","Molière","Jean Racine","Pierre Corneille"], correct:"Edmond Rostand"},
+    {q:"Quel romancier français est l'auteur du cycle des « Rougon-Macquart » ?", options:["Émile Zola","Honoré de Balzac","Victor Hugo","Guy de Maupassant"], correct:"Émile Zola"},
+    {q:"Qui est l'auteur du roman d'anticipation « 1984 » ?", options:["George Orwell","Aldous Huxley","Ray Bradbury","H.G. Wells"], correct:"George Orwell"},
+    {q:"Quel écrivain est l'auteur des « Trois Mousquetaires » ?", options:["Alexandre Dumas","Victor Hugo","Stendhal","Prosper Mérimée"], correct:"Alexandre Dumas"},
+    {q:"Qui a écrit « Don Quichotte » ?", options:["Miguel de Cervantès","Lope de Vega","Federico García Lorca","Gabriel García Márquez"], correct:"Miguel de Cervantès"},
+    {q:"Quelle écrivaine anglaise est l'auteure d'« Orgueil et Préjugés » ?", options:["Jane Austen","Emily Brontë","Virginia Woolf","Mary Shelley"], correct:"Jane Austen"},
+    {q:"Qui est l'auteur du « Comte de Monte-Cristo » ?", options:["Alexandre Dumas","Victor Hugo","Émile Zola","Jules Verne"], correct:"Alexandre Dumas"},
+    {q:"Quel dramaturge de la Grèce antique est l'auteur d'« Œdipe roi » ?", options:["Sophocle","Eschyle","Euripide","Aristophane"], correct:"Sophocle"},
+    {q:"Qui est l'auteur du cycle romanesque « À la recherche du temps perdu » ?", options:["Marcel Proust","André Gide","François Mauriac","Louis-Ferdinand Céline"], correct:"Marcel Proust"},
+    {q:"Quel écrivain irlandais est l'auteur d'« Ulysse » (1922), l'un des romans les plus influents du 20e siècle ?", options:["James Joyce","Oscar Wilde","Samuel Beckett","George Bernard Shaw"], correct:"James Joyce"}
+  ]},
+  histoire: { label:"🏛️ Histoire", emoji:"🏛️", questions:[
+    {q:"En quelle année a eu lieu la prise de la Bastille ?", options:["1789","1799","1804","1815"], correct:"1789"},
+    {q:"Quel empereur des Français est sacré en 1804 ?", options:["Napoléon Bonaparte","Louis XVIII","Charles X","Louis-Philippe"], correct:"Napoléon Bonaparte"},
+    {q:"En quelle année la Seconde Guerre mondiale s'est-elle achevée ?", options:["1945","1944","1943","1946"], correct:"1945"},
+    {q:"Quel roi de France est guillotiné en 1793 ?", options:["Louis XVI","Louis XV","Louis XIV","Charles Ier"], correct:"Louis XVI"},
+    {q:"En quelle année le mur de Berlin est-il tombé ?", options:["1989","1991","1985","1993"], correct:"1989"},
+    {q:"Quelle civilisation antique a construit les pyramides de Gizeh ?", options:["Les Égyptiens","Les Mésopotamiens","Les Perses","Les Phéniciens"], correct:"Les Égyptiens"},
+    {q:"En quelle année Christophe Colomb atteint-il les Amériques pour la première fois ?", options:["1492","1498","1487","1500"], correct:"1492"},
+    {q:"Quel traité met officiellement fin à la Première Guerre mondiale en 1919 ?", options:["Le traité de Versailles","Le traité de Vienne","Le traité de Rome","Le traité de Westphalie"], correct:"Le traité de Versailles"},
+    {q:"Qui est le premier président de la République française, élu en 1848 ?", options:["Louis-Napoléon Bonaparte","Adolphe Thiers","Jules Grévy","Sadi Carnot"], correct:"Louis-Napoléon Bonaparte"},
+    {q:"Qui est le premier président de la République du Cameroun après l'indépendance ?", options:["Ahmadou Ahidjo","Paul Biya","Ruben Um Nyobé","Félix Moumié"], correct:"Ahmadou Ahidjo"},
+    {q:"Quel général et homme d'État a dirigé la France libre durant la Seconde Guerre mondiale, avant de fonder la Ve République ?", options:["Charles de Gaulle","Philippe Pétain","Georges Clemenceau","Pierre Laval"], correct:"Charles de Gaulle"},
+    {q:"Quelle guerre oppose le Nord et le Sud des États-Unis de 1861 à 1865 ?", options:["La guerre de Sécession","La guerre d'indépendance","La guerre hispano-américaine","La guerre de 1812"], correct:"La guerre de Sécession"},
+    {q:"En quelle année l'homme marche-t-il pour la première fois sur la Lune ?", options:["1969","1967","1971","1965"], correct:"1969"},
+    {q:"En quelle année l'Empire romain d'Occident s'effondre-t-il ?", options:["476","410","500","390"], correct:"476"},
+    {q:"Quelle reine d'Égypte est célèbre pour ses liaisons avec Jules César et Marc Antoine ?", options:["Cléopâtre","Néfertiti","Hatchepsout","Nitocris"], correct:"Cléopâtre"},
+    {q:"En quelle année débute la Première Guerre mondiale ?", options:["1914","1912","1916","1918"], correct:"1914"},
+    {q:"Quel explorateur portugais organise la première expédition à faire le tour du monde, achevée après sa mort ?", options:["Fernand de Magellan","Vasco de Gama","Christophe Colomb","Bartolomeu Dias"], correct:"Fernand de Magellan"},
+    {q:"Quelle dynastie chinoise a fait reconstruire une grande partie de la Grande Muraille sous sa forme actuelle ?", options:["La dynastie Ming","La dynastie Qing","La dynastie Han","La dynastie Tang"], correct:"La dynastie Ming"},
+    {q:"Quel homme politique français est à l'origine du décret d'abolition définitive de l'esclavage dans les colonies françaises, en 1848 ?", options:["Victor Schoelcher","Victor Hugo","Jean Jaurès","Léon Gambetta"], correct:"Victor Schoelcher"},
+    {q:"Quel roi d'Angleterre signe la Grande Charte (Magna Carta) en 1215, limitant le pouvoir royal ?", options:["Jean sans Terre","Richard Cœur de Lion","Guillaume le Conquérant","Henri VIII"], correct:"Jean sans Terre"}
   ]}
 };
 
@@ -511,7 +649,7 @@ function colorFor(key){
   const colors = {
     football:"#16a34a", dragonball:"#f97316", culture:"#0ea5e9", musique:"#ec4899",
     ecole_champions:"#eab308", olive_tom:"#22c55e", agriculture:"#65a30d", sciences_tech:"#6366f1", nature:"#059669",
-    bible:"#7c3aed",
+    bible:"#7c3aed", cinema:"#facc15", litterature:"#f43f5e", histoire:"#b45309",
     animal:"#f59e0b", repas:"#ef4444", footballeur:"#3b82f6", mariage:"#ec4899", compatibilite:"#a855f7",
     voyageur:"#0891b2", superhero:"#dc2626", whatsapp:"#16a34a"
   };
@@ -945,7 +1083,7 @@ const PERSONALITY_QUIZZES = {
   }
 };
 
-const DEFAULT_PLAYERS = ["Jopa","Majes","Thurell","Bambi"];
+const DEFAULT_PLAYERS = ["Jopa","Majes","Thurell","Bambi","Sorel"];
 
 /* ============== UTILS ============== */
 function shuffle(arr){
@@ -1075,7 +1213,7 @@ function attachTopbar(){
 function renderNamePicker(){
   topbarEl.classList.add("hidden");
   el.innerHTML = `
-    <div class="intro-avatar">👋</div>
+    ${renderLogoBadge(120)}
     <h1>Bienvenue !</h1>
     <p class="subtitle">Qui es-tu ?</p>
     <div class="name-grid" id="name-grid">
@@ -1141,7 +1279,7 @@ function handleActiveGame(activeGame){
 /* ============== ECRAN : ATTENTE ============== */
 function renderWaiting(){
   el.innerHTML = `
-    <div class="intro-avatar">⏳</div>
+    ${renderLogoBadge(100)}
     <div class="intro-name">C'est calme par ici...</div>
     <p class="subtitle">Jopa vous enverra un nouveau jeu prochainement 🎮</p>
     <button class="btn btn-secondary" id="see-history-btn">📊 Voir le classement & l'historique</button>
@@ -1191,21 +1329,32 @@ function renderQuizQuestion(){
   quizState.timeLeft = activeGame.chrono;
   let selected = new Set();
 
+  const CIRC = 2 * Math.PI * 26;
+  const LETTERS = ["A","B","C","D","E","F"];
+
   el.innerHTML = `
     <div class="quiz-top">
       <span class="quiz-progress">Question ${quizState.qIndex+1} / ${total}</span>
-      <span class="timer-badge" id="timer-badge">${quizState.timeLeft}s</span>
+      <div class="timer-gauge" id="timer-gauge">
+        <svg viewBox="0 0 60 60" width="54" height="54">
+          <circle class="timer-track" cx="30" cy="30" r="26"></circle>
+          <circle class="timer-fill" id="timer-fill-circle" cx="30" cy="30" r="26"
+            stroke-dasharray="${CIRC}" stroke-dashoffset="0"></circle>
+        </svg>
+        <span class="timer-number" id="timer-badge">${quizState.timeLeft}</span>
+      </div>
     </div>
     <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:100%"></div></div>
     ${isMulti ? `<span class="badge badge-multi">✅ Plusieurs bonnes réponses possibles</span>` : ''}
-    <div class="question-text">${item.q}</div>
+    <div class="question-pill">${item.q}</div>
     <div class="options" id="options-wrap">
-      ${item.options.map(opt=>`<button class="option${isMulti?' option-multi':''}" data-val="${encodeURIComponent(opt)}">${opt}</button>`).join('')}
+      ${item.options.map((opt,i)=>`<button class="option${isMulti?' option-multi':''}" data-val="${encodeURIComponent(opt)}"><span class="option-letter">${LETTERS[i]}</span><span>${opt}</span></button>`).join('')}
     </div>
     ${isMulti ? `<button class="btn btn-primary" id="submit-multi-btn" disabled>Valider ma réponse</button>` : ''}
   `;
 
   const badge = document.getElementById("timer-badge");
+  const fillCircle = document.getElementById("timer-fill-circle");
   const fill = document.getElementById("progress-fill");
 
   if(isMulti){
@@ -1230,9 +1379,11 @@ function renderQuizQuestion(){
 
   quizState.timerId = setInterval(()=>{
     quizState.timeLeft--;
-    badge.textContent = quizState.timeLeft + "s";
-    fill.style.width = (quizState.timeLeft/activeGame.chrono*100) + "%";
-    if(quizState.timeLeft <= 5) badge.classList.add("warn");
+    const ratio = Math.max(quizState.timeLeft,0) / activeGame.chrono;
+    badge.textContent = Math.max(quizState.timeLeft,0);
+    fillCircle.style.strokeDashoffset = CIRC * (1 - ratio);
+    fill.style.width = (ratio*100) + "%";
+    if(quizState.timeLeft <= 5){ badge.classList.add("warn"); fillCircle.classList.add("warn"); }
     if(quizState.timeLeft <= 0){
       lockQuizAnswer(isMulti ? Array.from(selected) : null);
     }
@@ -1417,17 +1568,16 @@ function renderQuizResults(activeGame, myResult){
       });
       rows.sort((a,b)=> b.score - a.score);
       const medals = ["🥇","🥈","🥉"];
-      const maxScore = 10;
       const liveTarget = document.getElementById("live-rank");
       if(liveTarget){
-        liveTarget.innerHTML = rows.map((r,i)=>`
-          <div class="rank-row ${i===0?'top1':''} ${r.player===myName?'me':''}">
-            <div class="rank-bar" style="width:${(r.score/maxScore*100)}%"></div>
-            <div class="rank-medal">${medals[i] || (i+1)+"."}</div>
-            <div class="rank-name">${avatarFor(r.player)} ${r.player}</div>
-            <div class="rank-score">${r.score}/10</div>
+        liveTarget.innerHTML = rows.length ? `<div class="podium-row">${rows.map((r,i)=>`
+          <div class="podium-card ${i===0 && rows.length>1?'lead':''} ${r.player===myName?'me':''}">
+            <div class="podium-medal">${medals[i] || ''}</div>
+            <div class="podium-avatar">${avatarFor(r.player)}</div>
+            <div class="podium-name">${r.player}</div>
+            <div class="podium-score">${r.score}<span>/10</span></div>
           </div>
-        `).join('') || `<p class="small-note">En attente des autres joueurs...</p>`;
+        `).join('')}</div>` : `<p class="small-note">En attente des autres joueurs...</p>`;
       }
       // Un joueur vient de terminer (ou de rejoindre) : le classement de saison se
       // recalcule immédiatement, sans attendre l'archivage de la partie par l'admin.
@@ -1807,6 +1957,7 @@ function renderAdminDashboardWith(activeGame){
 
     <button class="btn btn-primary" id="launch-btn" disabled>Choisis un jeu pour lancer</button>
     <button class="btn-link" id="recover-btn" type="button">🔧 Récupérer des parties perdues (si besoin)</button>
+    <button class="btn btn-danger" id="reset-season-btn" type="button" style="margin-top:10px;">🗑️ Réinitialiser toute la saison (repartir à zéro à 5)</button>
     <button class="btn-link" id="back-btn" type="button">← Retour</button>
   `;
 
@@ -1830,6 +1981,7 @@ function renderAdminDashboardWith(activeGame){
 
   document.getElementById("back-btn").addEventListener("click", ()=> handleActiveGame(currentActiveGame));
   document.getElementById("recover-btn").addEventListener("click", recoverLostGames);
+  document.getElementById("reset-season-btn").addEventListener("click", resetSeason);
 
   const endBtn = document.getElementById("end-game-btn");
   if(endBtn) endBtn.addEventListener("click", endGame);
@@ -1901,6 +2053,34 @@ function archiveGame(activeGame){
       }));
     }
     return Promise.all(tasks);
+  });
+}
+
+/* Réinitialise complètement la saison : vide l'historique, les résultats de jeu et
+   le classement, pour repartir de zéro maintenant qu'on joue à 5 (Sorel, Jopa, Bambi,
+   Thurell, Majes). Action irréversible : double confirmation exigée (taper RESET). */
+function resetSeason(){
+  const typed = prompt(
+    "⚠️ Cette action supprime DÉFINITIVEMENT tout l'historique des parties, les scores et le classement de la saison, pour repartir à zéro à 5 joueurs.\n\nCeci est irréversible.\n\nTape RESET (en majuscules) pour confirmer :"
+  );
+  if(typed !== "RESET"){ alert("Réinitialisation annulée."); return; }
+  if(!confirm("Dernière confirmation : vraiment tout remettre à zéro ?")) return;
+
+  Promise.all([
+    db.collection("history").get(),
+    db.collection("liveResults").get()
+  ]).then(([histSnap, liveSnap])=>{
+    const deletes = [];
+    histSnap.forEach(d=> deletes.push(d.ref.delete()));
+    liveSnap.forEach(d=> deletes.push(d.ref.delete()));
+    deletes.push(db.collection("meta").doc("season").set({totals:{}}));
+    deletes.push(db.collection("meta").doc("usedQuestions").set({}));
+    return Promise.all(deletes);
+  }).then(()=>{
+    alert("Saison réinitialisée ! Tout repart à zéro pour Sorel, Jopa, Bambi, Thurell et Majes.");
+    renderAdminDashboard();
+  }).catch(err=>{
+    alert("Erreur pendant la réinitialisation : " + (err && err.message ? err.message : err));
   });
 }
 
