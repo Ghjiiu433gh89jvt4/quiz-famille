@@ -174,9 +174,25 @@
     background:linear-gradient(160deg,rgba(56,189,248,.25),rgba(8,26,58,.7)); border:1.5px solid var(--line);
   }
   .podium-card.lead .podium-avatar{ border-color:var(--gold); box-shadow:0 0 14px rgba(251,191,36,.5); }
-  .podium-name{ font-size:.78rem; font-weight:700; color:#dbeafe; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .podium-score{ font-size:1.15rem; font-weight:800; color:var(--accent2); margin-top:2px; }
-  .podium-score span{ font-size:.68rem; color:var(--muted); font-weight:600; }
+  .podium-name{ font-size:.78rem; font-weight:700; color:#dbeafe; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:6px; }
+  /* Pupitre façon "buzzer" de jeu télé, avec écran digital affichant la note */
+  .buzzer{ display:flex; flex-direction:column; align-items:center; width:100%; }
+  .buzzer-btn{
+    width:18px; height:18px; border-radius:50%; margin-bottom:-3px; z-index:2;
+    background:radial-gradient(circle at 35% 30%,#fb7185,#dc2626 75%);
+    border:2px solid #7f1d1d; box-shadow:0 2px 5px rgba(0,0,0,.4);
+  }
+  .buzzer-body{
+    width:82%; background:linear-gradient(180deg,#94a3b8,#475569 55%,#334155);
+    border-radius:8px 8px 4px 4px; border:1.5px solid #1e293b; padding:6px 4px;
+    display:flex; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,.35);
+  }
+  .buzzer-screen{
+    background:#04101f; border:1px solid var(--accent); border-radius:4px; padding:1px 12px;
+    font-weight:800; font-size:1.1rem; color:var(--accent2); text-shadow:0 0 8px rgba(34,211,238,.8);
+    min-width:22px; text-align:center; font-variant-numeric:tabular-nums;
+  }
+  .podium-card.lead .buzzer-screen{ color:var(--gold); border-color:var(--gold); text-shadow:0 0 8px rgba(251,191,36,.8); }
 
   .rank-row{
     display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:16px;
@@ -257,6 +273,7 @@
     .option{ padding:12px 14px; font-size:.9rem; }
     .podium-card{ min-width:72px; padding:10px 6px 8px; }
     .podium-avatar{ width:44px; height:44px; font-size:1.4rem; }
+    .buzzer-screen{ font-size:.95rem; padding:1px 8px; }
     .timer-gauge{ width:46px; height:46px; }
   }
 </style>
@@ -1983,7 +2000,10 @@ function renderQuizResults(activeGame, myResult){
             <div class="podium-medal">${medals[i] || ''}</div>
             <div class="podium-avatar">${avatarFill(r.player)}</div>
             <div class="podium-name">${r.player}</div>
-            <div class="podium-score">${r.score}<span>/10</span></div>
+            <div class="buzzer">
+              <div class="buzzer-btn"></div>
+              <div class="buzzer-body"><div class="buzzer-screen">${r.score}</div></div>
+            </div>
           </div>
         `).join('')}</div>` : `<p class="small-note">En attente des autres joueurs...</p>`;
       }
