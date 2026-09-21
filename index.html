@@ -175,24 +175,27 @@
   }
   .podium-card.lead .podium-avatar{ border-color:var(--gold); box-shadow:0 0 14px rgba(251,191,36,.5); }
   .podium-name{ font-size:.78rem; font-weight:700; color:#dbeafe; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:6px; }
-  /* Pupitre façon "buzzer" de jeu télé, avec écran digital affichant la note */
+  /* Pupitre de jeu télé (façon quiz buzzer) : capuchon bleu arrondi + colonne
+     blanche + écran digital sombre affichant la note, comme sur le modèle fourni. */
   .buzzer{ display:flex; flex-direction:column; align-items:center; width:100%; }
-  .buzzer-btn{
-    width:18px; height:18px; border-radius:50%; margin-bottom:-3px; z-index:2;
-    background:radial-gradient(circle at 35% 30%,#fb7185,#dc2626 75%);
-    border:2px solid #7f1d1d; box-shadow:0 2px 5px rgba(0,0,0,.4);
+  .buzzer-cap{
+    width:74%; height:16px; border-radius:50% 50% 4px 4px / 100% 100% 4px 4px;
+    background:linear-gradient(180deg,#7dd3fc,#0284c7 75%); border:1.5px solid #0369a1;
+    border-bottom:none; box-shadow:0 -2px 6px rgba(2,132,199,.5) inset;
   }
-  .buzzer-body{
-    width:82%; background:linear-gradient(180deg,#94a3b8,#475569 55%,#334155);
-    border-radius:8px 8px 4px 4px; border:1.5px solid #1e293b; padding:6px 4px;
-    display:flex; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,.35);
+  .buzzer-column{
+    width:80%; background:linear-gradient(180deg,#f8fafc,#cbd5e1 65%,#94a3b8);
+    border:1.5px solid #94a3b8; border-top:none; border-radius:0 0 10px 10px;
+    padding:7px 4px 9px; display:flex; justify-content:center;
+    box-shadow:0 5px 12px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.6) inset;
   }
   .buzzer-screen{
-    background:#04101f; border:1px solid var(--accent); border-radius:4px; padding:1px 12px;
+    background:#0b1220; border:2px solid #1e293b; border-radius:5px; padding:2px 14px;
     font-weight:800; font-size:1.1rem; color:var(--accent2); text-shadow:0 0 8px rgba(34,211,238,.8);
     min-width:22px; text-align:center; font-variant-numeric:tabular-nums;
   }
-  .podium-card.lead .buzzer-screen{ color:var(--gold); border-color:var(--gold); text-shadow:0 0 8px rgba(251,191,36,.8); }
+  .podium-card.lead .buzzer-cap{ background:linear-gradient(180deg,#fde68a,#d97706 75%); border-color:#b45309; }
+  .podium-card.lead .buzzer-screen{ color:var(--gold); text-shadow:0 0 8px rgba(251,191,36,.8); }
 
   .rank-row{
     display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:16px;
@@ -391,7 +394,21 @@ const THEMES = {
     {q:"Quelle est la durée approximative de la guerre de Cent Ans entre la France et l'Angleterre ?", options:["116 ans","100 ans","50 ans","150 ans"], correct:"116 ans"},
     {q:"Quel document fondateur des États-Unis est signé le 4 juillet 1776 ?", options:["La Déclaration d'indépendance","La Constitution américaine","Le Bill of Rights","Le traité de Paris"], correct:"La Déclaration d'indépendance"},
     {q:"Quelle civilisation précolombienne a bâti le Machu Picchu au Pérou ?", options:["Les Incas","Les Aztèques","Les Mayas","Les Olmèques"], correct:"Les Incas"},
-    {q:"Qui est le premier empereur de Rome ?", options:["Auguste","Jules César","Néron","Trajan"], correct:"Auguste"}
+    {q:"Qui est le premier empereur de Rome ?", options:["Auguste","Jules César","Néron","Trajan"], correct:"Auguste"},
+    {q:"Quel traité, signé en 1957, fonde la Communauté économique européenne ?", options:["Le traité de Rome","Le traité de Maastricht","Le traité de Lisbonne","Le traité de Nice"], correct:"Le traité de Rome"},
+    {q:"Quelle reine d'Angleterre, fille d'Henri VIII, donne son nom à l'ère élisabéthaine ?", options:["Élisabeth Ire","Victoria","Marie Tudor","Anne"], correct:"Élisabeth Ire"},
+    {q:"Quel empire précolombien, centré sur la vallée de Mexico, est conquis par Hernán Cortés en 1521 ?", options:["L'Empire aztèque","L'Empire inca","L'Empire maya","L'Empire olmèque"], correct:"L'Empire aztèque"},
+    {q:"En quelle année la Révolution russe renverse-t-elle le régime tsariste ?", options:["1917","1905","1921","1914"], correct:"1917"},
+    {q:"Quel pharaon égyptien est célèbre pour son tombeau découvert quasi intact en 1922 par Howard Carter ?", options:["Toutânkhamon","Ramsès II","Khéops","Akhenaton"], correct:"Toutânkhamon"},
+    {q:"Quelle expédition militaire française, menée par Bonaparte, débute en 1798 et relance l'égyptologie ?", options:["La campagne d'Égypte","La campagne d'Italie","La campagne de Russie","La campagne d'Espagne"], correct:"La campagne d'Égypte"},
+    {q:"Quel mur symbolique séparait Berlin-Ouest de Berlin-Est de 1961 à 1989 ?", options:["Le mur de Berlin","Le rideau de fer","La ligne Maginot","Le mur de l'Atlantique"], correct:"Le mur de Berlin"},
+    {q:"Quelle civilisation a bâti la cité inca du Machu Picchu au Pérou ?", options:["Les Incas","Les Aztèques","Les Mayas","Les Olmèques"], correct:"Les Incas"},
+    {q:"En quelle année la France abolit-elle définitivement l'esclavage dans ses colonies ?", options:["1848","1794","1815","1830"], correct:"1848"},
+    {q:"Quel roi de Macédoine, élève d'Aristote, a conquis un immense empire jusqu'en Inde ?", options:["Alexandre le Grand","Philippe II","Darius III","Ptolémée"], correct:"Alexandre le Grand"},
+    {q:"Quelle dynastie régnait en France au moment de la Révolution de 1789 ?", options:["Les Bourbons","Les Valois","Les Capétiens directs","Les Orléans"], correct:"Les Bourbons"},
+    {q:"Quel événement de 1929, débuté à Wall Street, plonge le monde dans une grave crise économique ?", options:["Le krach boursier","La Grande Dépression allemande","Le crash de 1987","La crise de 1907"], correct:"Le krach boursier"},
+    {q:"Quel traité met fin à la Seconde Guerre mondiale en Europe, célébré le 8 mai 1945 ?", options:["La capitulation allemande (Victoire en Europe)","Le traité de Versailles","L'armistice de 1918","Le traité de Yalta"], correct:"La capitulation allemande (Victoire en Europe)"},
+    {q:"Quel empire, dirigé par les sultans ottomans, contrôlait une grande partie du Moyen-Orient jusqu'en 1922 ?", options:["L'Empire ottoman","L'Empire perse","L'Empire byzantin","L'Empire arabe"], correct:"L'Empire ottoman"}
   ]},
   geographie: { label:"🌍 Géographie", emoji:"🌍", desc:"Pays, capitales, fleuves, montagnes, villes, océans", questions:[
     {q:"Quelle est la capitale du Cameroun ?", options:["Yaoundé","Douala","Bafoussam","Garoua"], correct:"Yaoundé"},
@@ -420,7 +437,21 @@ const THEMES = {
     {q:"Quelle est la capitale de l'Égypte ?", options:["Le Caire","Alexandrie","Louxor","Gizeh"], correct:"Le Caire"},
     {q:"Quel pays partage sa frontière avec le plus grand nombre de pays au monde ?", options:["La Chine","La Russie","Le Brésil","La France"], correct:"La Chine"},
     {q:"Quelle région du Cameroun est réputée pour ses volcans et son climat frais ?", options:["L'Ouest","Le Nord","L'Est","L'Extrême-Nord"], correct:"L'Ouest"},
-    {q:"Quel est le plus long fleuve d'Afrique après le Nil ?", options:["Le Congo","Le Niger","Le Zambèze","L'Oubangui"], correct:"Le Congo"}
+    {q:"Quel est le plus long fleuve d'Afrique après le Nil ?", options:["Le Congo","Le Niger","Le Zambèze","L'Oubangui"], correct:"Le Congo"},
+    {q:"Quelle chaîne de montagnes est la plus haute du monde, abritant l'Everest ?", options:["L'Himalaya","Les Andes","Les Rocheuses","Le Caucase"], correct:"L'Himalaya"},
+    {q:"Quel pays d'Amérique du Sud possède le plus long littoral sur l'océan Pacifique ?", options:["Le Chili","Le Pérou","L'Équateur","La Colombie"], correct:"Le Chili"},
+    {q:"Quelle capitale se situe à la plus haute altitude au monde ?", options:["La Paz (Bolivie)","Quito (Équateur)","Bogotá (Colombie)","Katmandou (Népal)"], correct:"La Paz (Bolivie)"},
+    {q:"Quel désert asiatique s'étend principalement entre la Chine et la Mongolie ?", options:["Le désert de Gobi","Le désert du Taklamakan","Le désert du Thar","Le désert du Kara-Koum"], correct:"Le désert de Gobi"},
+    {q:"Quelle mer est en réalité un lac salé sans exutoire, célèbre pour sa forte salinité ?", options:["La mer Morte","La mer Caspienne","La mer d'Aral","Le lac Titicaca"], correct:"La mer Morte"},
+    {q:"Quelle ligne imaginaire, à 0° de latitude, sépare la Terre en hémisphère nord et hémisphère sud ?", options:["L'équateur","Le tropique du Cancer","Le méridien de Greenwich","Le cercle polaire"], correct:"L'équateur"},
+    {q:"Quel pays gabonais a sa capitale, Libreville, pratiquement sur la ligne équatoriale ?", options:["Le Gabon","Le Congo","Le Cameroun","La Guinée équatoriale"], correct:"Le Gabon"},
+    {q:"Quel archipel, situé dans le Pacifique, appartient à l'Équateur et abrite une faune unique étudiée par Darwin ?", options:["Les îles Galápagos","Les îles Hawaï","Les îles Fidji","Les îles Canaries"], correct:"Les îles Galápagos"},
+    {q:"Quel pays possède le plus grand nombre d'îles au monde ?", options:["La Suède","L'Indonésie","Les Philippines","La Norvège"], correct:"La Suède"},
+    {q:"Quelle région du Cameroun borde le lac Tchad, au nord du pays ?", options:["L'Extrême-Nord","Le Nord","L'Adamaoua","Le Nord-Ouest"], correct:"L'Extrême-Nord"},
+    {q:"Quel canal artificiel relie la mer Méditerranée à la mer Rouge ?", options:["Le canal de Suez","Le canal de Panama","Le détroit d'Ormuz","Le canal de Corinthe"], correct:"Le canal de Suez"},
+    {q:"Quel pays est séparé de l'Espagne par les Pyrénées ?", options:["La France","Le Portugal","L'Andorre (entre les deux)","L'Italie"], correct:"La France"},
+    {q:"Quelle est la capitale du Ghana, pays voisin du Cameroun sur le golfe de Guinée ?", options:["Accra","Lomé","Abidjan","Cotonou"], correct:"Accra"},
+    {q:"Quel fleuve, le plus long d'Asie, traverse la Chine d'ouest en est ?", options:["Le Yangtsé","Le fleuve Jaune","Le Mékong","L'Amour"], correct:"Le Yangtsé"}
   ]},
   art: { label:"🎨 Art", emoji:"🎨", desc:"Peinture, sculpture, architecture, artistes", questions:[
     {q:"Qui a peint la Joconde (Mona Lisa) ?", options:["Léonard de Vinci","Michel-Ange","Picasso","Raphaël"], correct:"Léonard de Vinci"},
@@ -445,7 +476,19 @@ const THEMES = {
     {q:"Quelle artiste mexicaine est connue pour ses nombreux autoportraits expressifs ?", options:["Frida Kahlo","Remedios Varo","Leonora Carrington","Tina Modotti"], correct:"Frida Kahlo"},
     {q:"Qui a peint « Les Tournesols », une célèbre série de natures mortes ?", options:["Vincent van Gogh","Paul Cézanne","Henri Matisse","Georges Seurat"], correct:"Vincent van Gogh"},
     {q:"Quel courant artistique, illustré par Henri Matisse, utilise des couleurs pures et éclatantes ?", options:["Le fauvisme","Le pointillisme","Le cubisme","Le divisionnisme"], correct:"Le fauvisme"},
-    {q:"Quelle célèbre statue antique, découverte en 1820, représente une femme au buste dénudé et sans bras ?", options:["La Vénus de Milo","La Victoire de Samothrace","La Vénus de Botticelli","La Diane chasseresse"], correct:"La Vénus de Milo"}
+    {q:"Quelle célèbre statue antique, découverte en 1820, représente une femme au buste dénudé et sans bras ?", options:["La Vénus de Milo","La Victoire de Samothrace","La Vénus de Botticelli","La Diane chasseresse"], correct:"La Vénus de Milo"},
+    {q:"Quel peintre italien de la Renaissance est l'auteur de « La Naissance de Vénus » ?", options:["Sandro Botticelli","Léonard de Vinci","Raphaël","Titien"], correct:"Sandro Botticelli"},
+    {q:"Quel mouvement pictural du 20e siècle, mené par Kandinsky, rejette la représentation figurative ?", options:["L'art abstrait","Le cubisme","Le fauvisme","Le futurisme"], correct:"L'art abstrait"},
+    {q:"Quelle technique de gravure consiste à creuser une plaque métallique à l'acide pour y imprimer un dessin ?", options:["L'eau-forte","La lithographie","La sérigraphie","La linogravure"], correct:"L'eau-forte"},
+    {q:"Quel peintre néerlandais du 17e siècle est célèbre pour ses clairs-obscurs et ses autoportraits, comme « La Ronde de nuit » ?", options:["Rembrandt","Vermeer","Frans Hals","Pieter de Hooch"], correct:"Rembrandt"},
+    {q:"Quelle sculptrice française, compagne de Rodin, est l'auteure de « La Valse » ?", options:["Camille Claudel","Niki de Saint Phalle","Louise Bourgeois","Germaine Richier"], correct:"Camille Claudel"},
+    {q:"Quel artiste américain est associé au mouvement de l'expressionnisme abstrait et à la technique du dripping ?", options:["Jackson Pollock","Mark Rothko","Willem de Kooning","Franz Kline"], correct:"Jackson Pollock"},
+    {q:"Quel peintre italien du Quattrocento a peint « La Naissance de Vénus » et travaillait à Florence sous les Médicis ?", options:["Sandro Botticelli","Fra Angelico","Masaccio","Piero della Francesca"], correct:"Sandro Botticelli"},
+    {q:"Quelle technique consiste à assembler de petits fragments colorés (pierre, verre) pour former une image ?", options:["La mosaïque","Le vitrail","La tapisserie","L'émail"], correct:"La mosaïque"},
+    {q:"Quel peintre postimpressionniste français, ami de Van Gogh, a beaucoup peint Tahiti ?", options:["Paul Gauguin","Paul Cézanne","Georges Seurat","Henri de Toulouse-Lautrec"], correct:"Paul Gauguin"},
+    {q:"Quel art japonais consiste à réparer les céramiques brisées en sublimant les fissures avec de l'or ?", options:["Le kintsugi","L'ikebana","Le bonsaï","L'origami"], correct:"Le kintsugi"},
+    {q:"Quelle œuvre monumentale de Michel-Ange orne le plafond de la chapelle Sixtine, achevée en 1512 ?", options:["La Création d'Adam et les fresques de la Genèse","Le Jugement dernier seul","La Pietà","Les quatre saisons"], correct:"La Création d'Adam et les fresques de la Genèse"},
+    {q:"Quel peintre autrichien, figure de l'Art nouveau viennois, est l'auteur du « Baiser » ?", options:["Gustav Klimt","Egon Schiele","Oskar Kokoschka","Koloman Moser"], correct:"Gustav Klimt"}
   ]},
   architecture: { label:"🏗️ Architecture", emoji:"🏗️", desc:"Monuments, bâtiments célèbres, architectes", questions:[
     {q:"Quel architecte est à l'origine de la Tour Eiffel ?", options:["Gustave Eiffel","Le Corbusier","Antoni Gaudí","Louis Sullivan"], correct:"Gustave Eiffel"},
@@ -465,7 +508,17 @@ const THEMES = {
     {q:"Quel dôme antique romain, encore intact, est un chef-d'œuvre d'ingénierie sans armature métallique ?", options:["Le Panthéon de Rome","Le dôme de Florence","Basilique Saint-Pierre","Le Colisée"], correct:"Le Panthéon de Rome"},
     {q:"Quel architecte est associé à la pyramide de verre du Louvre, inaugurée en 1989 ?", options:["Ieoh Ming Pei","Jean Nouvel","Renzo Piano","Norman Foster"], correct:"Ieoh Ming Pei"},
     {q:"Quel matériau de construction moderne, mélange de ciment, sable et eau, est essentiel au béton armé ?", options:["Le béton","Le granit","Le grès","Le calcaire"], correct:"Le béton"},
-    {q:"Quelle mosquée, l'une des plus grandes au monde, se situe à Casablanca ?", options:["La mosquée Hassan II","La mosquée Koutoubia","La Grande Mosquée de Paris","La mosquée Al-Azhar"], correct:"La mosquée Hassan II"}
+    {q:"Quelle mosquée, l'une des plus grandes au monde, se situe à Casablanca ?", options:["La mosquée Hassan II","La mosquée Koutoubia","La Grande Mosquée de Paris","La mosquée Al-Azhar"], correct:"La mosquée Hassan II"},
+    {q:"Quel style architectural, dominant en Europe du 12e au 16e siècle, est caractérisé par des voûtes en ogive et des vitraux ?", options:["Le gothique","Le roman","Le baroque","Le néoclassique"], correct:"Le gothique"},
+    {q:"Quel célèbre architecte a conçu le Centre Pompidou à Paris avec Renzo Piano, avec sa structure apparente ?", options:["Richard Rogers","Norman Foster","Jean Nouvel","Dominique Perrault"], correct:"Richard Rogers"},
+    {q:"Quel palais royal espagnol, à Grenade, est un chef-d'œuvre de l'architecture mauresque ?", options:["L'Alhambra","L'Escurial","Le palais royal de Madrid","L'Alcázar de Séville"], correct:"L'Alhambra"},
+    {q:"Quelle célèbre tour penchée italienne est un campanile construit à partir de 1173 ?", options:["La tour de Pise","La tour de Bologne","Le campanile de Florence","La tour de Sienne"], correct:"La tour de Pise"},
+    {q:"Quel type de bâtiment religieux musulman est surmonté d'un minaret ?", options:["La mosquée","La synagogue","Le temple","La cathédrale"], correct:"La mosquée"},
+    {q:"Quel architecte allemand, fondateur du Bauhaus, a théorisé « la forme suit la fonction » avec Louis Sullivan ?", options:["Walter Gropius","Le Corbusier","Mies van der Rohe","Adolf Loos"], correct:"Walter Gropius"},
+    {q:"Quel amphithéâtre romain, encore utilisé aujourd'hui pour des spectacles, se trouve à Vérone en Italie ?", options:["Les arènes de Vérone","Le Colisée","Le théâtre d'Épidaure","Les arènes de Nîmes"], correct:"Les arènes de Vérone"},
+    {q:"Quel matériau traditionnel, séché au soleil, est utilisé pour bâtir la Grande Mosquée de Djenné au Mali ?", options:["Le banco (terre crue)","La pierre calcaire","Le bois","La brique cuite"], correct:"Le banco (terre crue)"},
+    {q:"Quel monument parisien, arc de triomphe commandé par Napoléon, domine la place de l'Étoile ?", options:["L'Arc de Triomphe","La Porte Saint-Martin","La Colonne Vendôme","Le Panthéon"], correct:"L'Arc de Triomphe"},
+    {q:"Quel style architectural du Brésil moderniste, conçu par Oscar Niemeyer, caractérise la capitale Brasília ?", options:["Le style moderniste brésilien","L'Art déco","Le brutalisme britannique","Le style colonial"], correct:"Le style moderniste brésilien"}
   ]},
   animaux: { label:"🐘 Animaux", emoji:"🐘", desc:"Espèces, zoologie, comportements, records", questions:[
     {q:"Quel est le plus grand mammifère terrestre ?", options:["L'éléphant d'Afrique","Le rhinocéros","La girafe","L'hippopotame"], correct:"L'éléphant d'Afrique"},
@@ -491,7 +544,18 @@ const THEMES = {
     {q:"Quel est le seul félin vivant en groupe social organisé (la horde) ?", options:["Le lion","Le tigre","Le léopard","Le guépard"], correct:"Le lion"},
     {q:"Quelle est la particularité de l'ornithorynque, mammifère australien ?", options:["Il pond des œufs","Il n'a pas de squelette","Il vit uniquement sous l'eau","Il change de sexe"], correct:"Il pond des œufs"},
     {q:"Quel animal est le symbole du panda, originaire de Chine ?", options:["Le panda géant","Le panda roux","Le koala","Le tapir"], correct:"Le panda géant"},
-    {q:"Combien de temps une tortue géante des Galápagos peut-elle vivre en moyenne ?", options:["Plus de 100 ans","Environ 40 ans","Environ 60 ans","Environ 200 ans"], correct:"Plus de 100 ans"}
+    {q:"Combien de temps une tortue géante des Galápagos peut-elle vivre en moyenne ?", options:["Plus de 100 ans","Environ 40 ans","Environ 60 ans","Environ 200 ans"], correct:"Plus de 100 ans"},
+    {q:"Quel est le seul marsupial vivant naturellement en dehors de l'Australasie, présent en Amérique ?", options:["L'opossum","Le kangourou","Le wombat","Le koala"], correct:"L'opossum"},
+    {q:"Quel félin, le plus grand d'Asie, vit notamment en Sibérie et en Inde (tigre du Bengale) ?", options:["Le tigre","Le léopard des neiges","Le lynx","Le jaguar"], correct:"Le tigre"},
+    {q:"Quel animal africain possède la peau la plus épaisse et vit souvent près des points d'eau, très territorial ?", options:["L'hippopotame","Le rhinocéros","L'éléphant","Le buffle"], correct:"L'hippopotame"},
+    {q:"Quel oiseau migrateur, symbole de la cigogne, parcourt des milliers de kilomètres entre l'Europe et l'Afrique ?", options:["La cigogne blanche","L'hirondelle","Le héron","Le flamant rose"], correct:"La cigogne blanche"},
+    {q:"Quel est le seul reptile venimeux vivant en France métropolitaine (famille des vipères) ?", options:["La vipère","La couleuvre","L'orvet","Le lézard vert"], correct:"La vipère"},
+    {q:"Quel animal marin, le plus grand invertébré, peut mesurer plus de 10 mètres avec ses tentacules ?", options:["Le calmar géant","La pieuvre géante du Pacifique","La méduse lion","L'étoile de mer géante"], correct:"Le calmar géant"},
+    {q:"Quel mammifère aquatique africain, herbivore, est parfois appelé « vache de mer » ?", options:["Le lamantin","Le phoque","L'hippopotame","Le morse"], correct:"Le lamantin"},
+    {q:"Quel oiseau rapace, le plus grand du monde par l'envergure, vit dans les Andes ?", options:["Le condor des Andes","L'aigle royal","Le vautour fauve","Le harfang des neiges"], correct:"Le condor des Andes"},
+    {q:"Quel insecte africain vit en colonies très organisées et construit des termitières géantes ?", options:["Le termite","La fourmi","L'abeille","Le criquet"], correct:"Le termite"},
+    {q:"Quel animal, symbole du Cameroun sportif, est aussi le plus gros félin d'Afrique après le lion ?", options:["Le léopard","Le guépard","Le lion","Le serval"], correct:"Le léopard"},
+    {q:"Quel est le nom du plus grand serpent d'Amérique du Sud, vivant dans l'eau, non venimeux mais constricteur ?", options:["L'anaconda vert","Le boa constrictor","Le python réticulé","Le serpent corail"], correct:"L'anaconda vert"}
   ]},
   botanique: { label:"🌱 Botanique", emoji:"🌱", desc:"Plantes, arbres, fleurs, fruits", questions:[
     {q:"Comment appelle-t-on le processus par lequel les plantes transforment la lumière du soleil en énergie ?", options:["La photosynthèse","La fermentation","La pollinisation","La germination"], correct:"La photosynthèse"},
@@ -513,7 +577,16 @@ const THEMES = {
     {q:"Quelle épice précieuse provient des stigmates séchés d'une fleur de crocus ?", options:["Le safran","Le curcuma","Le paprika","Le poivre"], correct:"Le safran"},
     {q:"Quel arbre à croissance très rapide est aussi la plus grande herbe du monde ?", options:["Le bambou","Le peuplier","L'eucalyptus","Le bananier"], correct:"Le bambou"},
     {q:"Quelle partie de la fleur transporte le pollen d'une fleur à l'autre grâce aux insectes ?", options:["Les étamines (pollen) via les pollinisateurs","Les racines","Les feuilles","Le pistil seul"], correct:"Les étamines (pollen) via les pollinisateurs"},
-    {q:"Quel palmier fournit l'huile la plus consommée au monde ?", options:["Le palmier à huile","Le cocotier","Le dattier","Le palmier royal"], correct:"Le palmier à huile"}
+    {q:"Quel palmier fournit l'huile la plus consommée au monde ?", options:["Le palmier à huile","Le cocotier","Le dattier","Le palmier royal"], correct:"Le palmier à huile"},
+    {q:"Quelle plante grasse, originaire du Mexique, est utilisée pour produire la tequila ?", options:["L'agave bleu","Le cactus opuntia","L'aloe vera","Le yucca"], correct:"L'agave bleu"},
+    {q:"Quel arbre produit la noix de cola, ingrédient traditionnel très consommé en Afrique de l'Ouest ?", options:["Le kolatier","Le baobab","Le manguier","Le tamarinier"], correct:"Le kolatier"},
+    {q:"Quelle céréale, à la base du couscous et du pain plat, est cultivée depuis l'Antiquité au Maghreb ?", options:["Le blé dur","L'orge","L'avoine","Le seigle"], correct:"Le blé dur"},
+    {q:"Quelle plante aquatique, cultivée en rizière inondée, nourrit la moitié de la population mondiale ?", options:["Le riz","Le blé","Le maïs","Le sorgho"], correct:"Le riz"},
+    {q:"Quel fruit tropical, riche en broméline, est couronné d'une touffe de feuilles épineuses ?", options:["L'ananas","La papaye","La mangue","Le fruit de la passion"], correct:"L'ananas"},
+    {q:"Quelle plante, dont on consomme les graines torréfiées, est à l'origine du chocolat ?", options:["Le cacaoyer","Le caféier","Le vanillier","Le théier"], correct:"Le cacaoyer"},
+    {q:"Quel légume racine orange est riche en bêta-carotène, bon pour la vue ?", options:["La carotte","Le radis","Le navet","La betterave"], correct:"La carotte"},
+    {q:"Quelle plante grimpante tropicale, cultivée à Madagascar, donne les gousses utilisées pour l'arôme vanille ?", options:["Le vanillier","Le poivrier","Le giroflier","Le muscadier"], correct:"Le vanillier"},
+    {q:"Quel arbre, symbole de paix, produit des fruits pressés pour en extraire une huile alimentaire méditerranéenne ?", options:["L'olivier","Le noyer","L'amandier","Le figuier"], correct:"L'olivier"}
   ]},
   cinema: { label:"🎬 Cinéma", emoji:"🎬", desc:"Films, réalisateurs, acteurs, personnages", questions:[
     {q:"Qui a réalisé « Pulp Fiction » (1994) ?", options:["Quentin Tarantino","Martin Scorsese","David Fincher","Steven Spielberg"], correct:"Quentin Tarantino"},
@@ -538,7 +611,17 @@ const THEMES = {
     {q:"Quel réalisateur camerounais a représenté le Cameroun avec le film « Quartier Mozart » ?", options:["Jean-Pierre Bekolo","Jean-Marie Teno","Bassek Ba Kobhio","Cyrille Masso"], correct:"Jean-Pierre Bekolo"},
     {q:"Quel acteur incarne Forrest Gump... et aussi le rôle principal dans « Cast Away » ?", options:["Tom Hanks","Tom Cruise","Matt Damon","Kevin Costner"], correct:"Tom Hanks"},
     {q:"Quel film d'animation Disney met en scène le lion Simba dans la savane africaine ?", options:["Le Roi Lion","Madagascar","Kirikou","Tarzan"], correct:"Le Roi Lion"},
-    {q:"Quel réalisateur est l'auteur de « Django Unchained » et « Kill Bill » ?", options:["Quentin Tarantino","Robert Rodriguez","Guy Ritchie","Sam Raimi"], correct:"Quentin Tarantino"}
+    {q:"Quel réalisateur est l'auteur de « Django Unchained » et « Kill Bill » ?", options:["Quentin Tarantino","Robert Rodriguez","Guy Ritchie","Sam Raimi"], correct:"Quentin Tarantino"},
+    {q:"Quel acteur incarne Neo dans la saga « Matrix » ?", options:["Keanu Reeves","Will Smith","Brad Pitt","Tom Cruise"], correct:"Keanu Reeves"},
+    {q:"Quel film d'animation français, réalisé par Michel Ocelot, met en scène une petite fille africaine face à un sorcier ?", options:["Kirikou et la Sorcière","Le Roi et l'Oiseau","Azur et Asmar","Persepolis"], correct:"Kirikou et la Sorcière"},
+    {q:"Quel réalisateur est l'auteur des trois films de la trilogie originale « Le Seigneur des Anneaux » ?", options:["Peter Jackson","Guillermo del Toro","James Cameron","Ridley Scott"], correct:"Peter Jackson"},
+    {q:"Quelle actrice incarne Hermione Granger dans la saga « Harry Potter » ?", options:["Emma Watson","Emma Stone","Emma Roberts","Kristen Stewart"], correct:"Emma Watson"},
+    {q:"Quel film musical de 2016, avec Emma Stone et Ryan Gosling, se déroule à Los Angeles ?", options:["La La Land","The Greatest Showman","A Star Is Born","Chicago"], correct:"La La Land"},
+    {q:"Quel réalisateur mexicain a remporté l'Oscar du meilleur réalisateur pour « Gravity » (2013) ?", options:["Alfonso Cuarón","Guillermo del Toro","Alejandro González Iñárritu","Robert Rodriguez"], correct:"Alfonso Cuarón"},
+    {q:"Quel acteur incarne le rôle-titre dans « Black Panther » (2018) ?", options:["Chadwick Boseman","Michael B. Jordan","Idris Elba","Denzel Washington"], correct:"Chadwick Boseman"},
+    {q:"Quel film d'horreur culte de 1973 met en scène une fillette possédée par un démon ?", options:["L'Exorciste","Rosemary's Baby","Carrie","Poltergeist"], correct:"L'Exorciste"},
+    {q:"Quel réalisateur camerounais est connu pour son long-métrage « Les Saignantes » (2005), un film de science-fiction africain ?", options:["Jean-Pierre Bekolo","Jean-Marie Teno","Bassek Ba Kobhio","Viviane Vanfleteren"], correct:"Jean-Pierre Bekolo"},
+    {q:"Quel réalisateur est l'auteur de la trilogie « Retour vers le futur » en tant que scénariste/producteur, aux côtés de Robert Zemeckis ?", options:["Steven Spielberg","George Lucas","James Cameron","Ron Howard"], correct:"Steven Spielberg"}
   ]},
   television: { label:"📺 Télévision", emoji:"📺", desc:"Séries, émissions, animateurs, personnages", questions:[
     {q:"Dans quelle ville fictive se déroule la série « Friends » ?", options:["New York","Los Angeles","Chicago","Boston"], correct:"New York"},
@@ -556,7 +639,14 @@ const THEMES = {
     {q:"Quel jeu télévisé propose à des candidats de deviner des mots à partir de définitions, avec des lettres à découvrir ?", options:["Slam","Motus","Des chiffres et des lettres","Le compte est bon"], correct:"Slam"},
     {q:"Quelle série britannique met en scène le détective Sherlock Holmes dans le Londres moderne, avec Benedict Cumberbatch ?", options:["Sherlock","Broadchurch","Luther","Peaky Blinders"], correct:"Sherlock"},
     {q:"Quel jeu télévisé français propose à des candidats de répondre à des questions générales, animé longtemps par Jean-Pierre Foucault sous le nom « Qui veut gagner des millions ? » ?", options:["Qui veut gagner des millions ?","Le Maillon faible","Fort Boyard","Pyramide"], correct:"Qui veut gagner des millions ?"},
-    {q:"Quelle série d'animation japonaise met en scène des enfants combattant avec des créatures appelées Pokémon ?", options:["Pokémon","Digimon","Yu-Gi-Oh!","Beyblade"], correct:"Pokémon"}
+    {q:"Quelle série d'animation japonaise met en scène des enfants combattant avec des créatures appelées Pokémon ?", options:["Pokémon","Digimon","Yu-Gi-Oh!","Beyblade"], correct:"Pokémon"},
+    {q:"Quelle série animée met en scène des super-héros crédibles et vulgaires produits par une entreprise, contrastant avec les films Marvel ?", options:["The Boys","Invincible","My Hero Academia","Watchmen"], correct:"The Boys"},
+    {q:"Quelle série dramatique suit les luttes de pouvoir de la famille Roy à la tête d'un empire médiatique ?", options:["Succession","Billions","House of Cards","Empire"], correct:"Succession"},
+    {q:"Quel animateur français a présenté « Le Grand Journal » sur Canal+ avant de rejoindre TF1 ?", options:["Michel Denisot","Cyril Hanouna","Laurent Ruquier","Thierry Ardisson"], correct:"Michel Denisot"},
+    {q:"Quelle série documentaire animalière française, diffusée sur TF1, est présentée par Nikos Aliagas puis d'autres animateurs ?", options:["Ushuaïa","La Planète bleue","Des racines et des ailes","Thalassa"], correct:"Ushuaïa"},
+    {q:"Quelle série espagnole, phénomène Netflix, met en scène un casse à la Fabrique nationale de la monnaie ?", options:["La Casa de Papel","Élite","Narcos","Vis a vis"], correct:"La Casa de Papel"},
+    {q:"Quel présentateur historique du journal de 20h de TF1 a été à l'antenne pendant plus de 20 ans jusqu'en 2008 ?", options:["Patrick Poivre d'Arvor","Claire Chazal","David Pujadas","Jean-Pierre Pernaut"], correct:"Patrick Poivre d'Arvor"},
+    {q:"Quelle série d'animation américaine met en scène un savant excentrique et son petit-fils un peu simplet à travers des univers parallèles ?", options:["Rick et Morty","Les Griffin","American Dad","Bob's Burgers"], correct:"Rick et Morty"}
   ]},
   litterature: { label:"📚 Littérature", emoji:"📚", desc:"Romans, auteurs, personnages, poésie", questions:[
     {q:"Qui est l'auteur des « Misérables » ?", options:["Victor Hugo","Émile Zola","Honoré de Balzac","Gustave Flaubert"], correct:"Victor Hugo"},
@@ -582,7 +672,17 @@ const THEMES = {
     {q:"Quel romancier britannique a écrit « Sa Majesté des Mouches » ?", options:["William Golding","George Orwell","Graham Greene","Ian McEwan"], correct:"William Golding"},
     {q:"Quel écrivain camerounais est l'auteur du roman « Le Vieux Nègre et la Médaille » ?", options:["Ferdinand Oyono","Mongo Beti","Calixthe Beyala","Patrice Nganang"], correct:"Ferdinand Oyono"},
     {q:"Qui a écrit « Une si longue lettre », roman emblématique de la littérature sénégalaise ?", options:["Mariama Bâ","Aminata Sow Fall","Fatou Diome","Ken Bugul"], correct:"Mariama Bâ"},
-    {q:"Quel poète et homme d'État sénégalais est une figure majeure du mouvement de la Négritude ?", options:["Léopold Sédar Senghor","Aimé Césaire","David Diop","Birago Diop"], correct:"Léopold Sédar Senghor"}
+    {q:"Quel poète et homme d'État sénégalais est une figure majeure du mouvement de la Négritude ?", options:["Léopold Sédar Senghor","Aimé Césaire","David Diop","Birago Diop"], correct:"Léopold Sédar Senghor"},
+    {q:"Quel poète martiniquais, cofondateur de la Négritude avec Senghor, a écrit « Cahier d'un retour au pays natal » ?", options:["Aimé Césaire","Léopold Sédar Senghor","Frantz Fanon","Édouard Glissant"], correct:"Aimé Césaire"},
+    {q:"Qui est l'auteur de la tragédie « Andromaque », dramaturge classique français du 17e siècle ?", options:["Jean Racine","Pierre Corneille","Molière","Voltaire"], correct:"Jean Racine"},
+    {q:"Quel romancier russe est l'auteur de « Crime et Châtiment » ?", options:["Fiodor Dostoïevski","Léon Tolstoï","Ivan Tourgueniev","Nicolas Gogol"], correct:"Fiodor Dostoïevski"},
+    {q:"Quel écrivain français, académicien, est l'auteur de la trilogie « Les Thibault » et de nombreux essais ?", options:["Roger Martin du Gard","André Gide","François Mauriac","Georges Duhamel"], correct:"Roger Martin du Gard"},
+    {q:"Qui est l'auteur de la pièce « En attendant Godot », figure du théâtre de l'absurde ?", options:["Samuel Beckett","Eugène Ionesco","Jean Genet","Albert Camus"], correct:"Samuel Beckett"},
+    {q:"Quel romancier américain, prix Nobel de littérature, est l'auteur du « Vieil Homme et la Mer » ?", options:["Ernest Hemingway","F. Scott Fitzgerald","John Steinbeck","William Faulkner"], correct:"Ernest Hemingway"},
+    {q:"Quelle romancière anglaise du 19e siècle, sous le nom de plume Currer Bell, a écrit « Jane Eyre » ?", options:["Charlotte Brontë","Emily Brontë","George Eliot","Elizabeth Gaskell"], correct:"Charlotte Brontë"},
+    {q:"Quel écrivain ivoirien est connu pour son roman « Les Soleils des indépendances » ?", options:["Ahmadou Kourouma","Bernard Dadié","Véronique Tadjo","Jean-Marie Adiaffi"], correct:"Ahmadou Kourouma"},
+    {q:"Qui est l'auteur du recueil de fables mettant en scène des animaux, dont « Le Corbeau et le Renard » ?", options:["Jean de La Fontaine","Charles Perrault","Ésope","Voltaire"], correct:"Jean de La Fontaine"},
+    {q:"Quel poète français du Moyen Âge est l'auteur de la « Ballade des pendus » ?", options:["François Villon","Christine de Pizan","Charles d'Orléans","Guillaume de Machaut"], correct:"François Villon"}
   ]},
   sciences_tech: { label:"💡 Sciences & techniques", emoji:"💡", desc:"Physique, chimie, informatique, inventions, technologie", questions:[
     {q:"Quel est le symbole chimique de l'eau ?", options:["H2O","CO2","O2","NaCl"], correct:"H2O"},
@@ -606,7 +706,16 @@ const THEMES = {
     {q:"Quelle unité mesure la quantité d'information numérique, base de l'octet ?", options:["Le bit","Le hertz","Le watt","Le volt"], correct:"Le bit"},
     {q:"Quel métal liquide à température ambiante est utilisé dans les anciens thermomètres ?", options:["Le mercure","Le plomb","L'étain","Le zinc"], correct:"Le mercure"},
     {q:"Quelle agence spatiale américaine a envoyé les premiers hommes sur la Lune ?", options:["La NASA","L'ESA","Roscosmos","SpaceX"], correct:"La NASA"},
-    {q:"Quel physicien a formulé les trois lois du mouvement, fondement de la mécanique classique ?", options:["Isaac Newton","Albert Einstein","Galilée","James Clerk Maxwell"], correct:"Isaac Newton"}
+    {q:"Quel physicien a formulé les trois lois du mouvement, fondement de la mécanique classique ?", options:["Isaac Newton","Albert Einstein","Galilée","James Clerk Maxwell"], correct:"Isaac Newton"},
+    {q:"Quelle entreprise a lancé le premier réseau social devenu Facebook en 2004 ?", options:["Meta (alors TheFacebook)","Twitter","MySpace","Friendster"], correct:"Meta (alors TheFacebook)"},
+    {q:"Quel chimiste français a mis au point le procédé de pasteurisation pour conserver les aliments ?", options:["Louis Pasteur","Antoine Lavoisier","Marcellin Berthelot","Claude Bernard"], correct:"Louis Pasteur"},
+    {q:"Quelle unité mesure la quantité de matière en chimie ?", options:["La mole","Le gramme","Le litre","Le newton"], correct:"La mole"},
+    {q:"Quel savant italien est crédité de l'invention de la pile électrique en 1800 ?", options:["Alessandro Volta","Luigi Galvani","Enrico Fermi","Galileo Galilei"], correct:"Alessandro Volta"},
+    {q:"Quel programme informatique protège un ordinateur contre les logiciels malveillants ?", options:["Un antivirus","Un navigateur","Un tableur","Un compilateur"], correct:"Un antivirus"},
+    {q:"Quelle entreprise a lancé le moteur de recherche dominant du web en 1998 ?", options:["Google","Yahoo","Bing","AltaVista"], correct:"Google"},
+    {q:"Quel physicien écossais a unifié l'électricité, le magnétisme et l'optique dans les équations de l'électromagnétisme ?", options:["James Clerk Maxwell","Michael Faraday","Isaac Newton","Ernest Rutherford"], correct:"James Clerk Maxwell"},
+    {q:"Quelle technologie sans fil, nommée d'après un roi viking, permet de connecter des appareils à courte distance ?", options:["Le Bluetooth","Le Wi-Fi","La 4G","Le NFC"], correct:"Le Bluetooth"},
+    {q:"Quel physicien néo-zélandais est considéré comme le père de la physique nucléaire, après avoir décrit la structure de l'atome ?", options:["Ernest Rutherford","Niels Bohr","Marie Curie","J.J. Thomson"], correct:"Ernest Rutherford"}
   ]},
   medecine: { label:"🩺 Médecine / santé", emoji:"🩺", desc:"Anatomie, maladies, médecins, découvertes", questions:[
     {q:"Quel organe du corps humain est responsable de la pensée et de la mémoire ?", options:["Le cerveau","Le cœur","Le foie","Les poumons"], correct:"Le cerveau"},
@@ -625,7 +734,16 @@ const THEMES = {
     {q:"Quel médecin grec de l'Antiquité est considéré comme le « père de la médecine » ?", options:["Hippocrate","Galien","Pythagore","Aristote"], correct:"Hippocrate"},
     {q:"Combien de dents possède un adulte humain en moyenne, dents de sagesse incluses ?", options:["32","28","30","36"], correct:"32"},
     {q:"Quelle maladie virale, aujourd'hui éradiquée dans le monde grâce à la vaccination, provoquait autrefois de graves épidémies ?", options:["La variole","La rougeole","La polio","Le tétanos"], correct:"La variole"},
-    {q:"Quel physicien-chimiste polonais-français a découvert le radium et le polonium ?", options:["Marie Curie","Rosalind Franklin","Dorothy Hodgkin","Ada Lovelace"], correct:"Marie Curie"}
+    {q:"Quel physicien-chimiste polonais-français a découvert le radium et le polonium ?", options:["Marie Curie","Rosalind Franklin","Dorothy Hodgkin","Ada Lovelace"], correct:"Marie Curie"},
+    {q:"Quelle est la température normale du corps humain, environ ?", options:["37°C","36°C","38°C","39°C"], correct:"37°C"},
+    {q:"Quel organe produit la bile, utile à la digestion des graisses ?", options:["Le foie","Le pancréas","La vésicule biliaire seule","L'estomac"], correct:"Le foie"},
+    {q:"Quelle maladie chronique se caractérise par un excès de sucre dans le sang ?", options:["Le diabète","L'hypertension","L'anémie","L'hypothyroïdie"], correct:"Le diabète"},
+    {q:"Quel médecin britannique a développé la première vaccination, contre la variole, à la fin du 18e siècle ?", options:["Edward Jenner","Alexander Fleming","Joseph Lister","John Snow"], correct:"Edward Jenner"},
+    {q:"Quelle partie de l'œil permet de faire la mise au point de la lumière sur la rétine ?", options:["Le cristallin","La cornée","L'iris","La pupille"], correct:"Le cristallin"},
+    {q:"Quel muscle est le plus grand et le plus puissant du corps humain ?", options:["Le grand fessier","Le quadriceps","Le biceps","Le mollet"], correct:"Le grand fessier"},
+    {q:"Quelle maladie respiratoire, causée par le tabac notamment, réduit progressivement la capacité pulmonaire ?", options:["La BPCO (bronchopneumopathie chronique obstructive)","L'asthme","La pneumonie","La bronchite aiguë"], correct:"La BPCO (bronchopneumopathie chronique obstructive)"},
+    {q:"Quel type de cellules sanguines transporte l'oxygène dans le corps ?", options:["Les globules rouges","Les globules blancs","Les plaquettes","Le plasma"], correct:"Les globules rouges"},
+    {q:"Quel médecin français a fondé la microbiologie moderne et développé plusieurs vaccins, dont celui contre la rage ?", options:["Louis Pasteur","Claude Bernard","Alexandre Yersin","Émile Roux"], correct:"Louis Pasteur"}
   ]},
   sport: { label:"🏆 Sport", emoji:"🏆", desc:"Football, tennis, JO, athlètes, compétitions", questions:[
     {q:"Combien de joueurs une équipe de football aligne-t-elle sur le terrain, gardien inclus ?", options:["11","10","9","12"], correct:"11"},
@@ -648,7 +766,17 @@ const THEMES = {
     {q:"Quel cycliste français a remporté cinq fois le Tour de France ?", options:["Bernard Hinault","Jacques Anquetil","Laurent Fignon","Raymond Poulidor"], correct:"Bernard Hinault"},
     {q:"Quel sport olympique se pratique sur un tatami avec des prises de projection et d'immobilisation ?", options:["Le judo","Le karaté","La lutte","Le taekwondo"], correct:"Le judo"},
     {q:"Quelle nageuse ou quel nageur américain détient le record du plus grand nombre de médailles olympiques ?", options:["Michael Phelps","Mark Spitz","Katie Ledecky","Ryan Lochte"], correct:"Michael Phelps"},
-    {q:"Quel est le stade mythique du FC Barcelone ?", options:["Le Camp Nou","Le Santiago Bernabéu","San Siro","L'Allianz Arena"], correct:"Le Camp Nou"}
+    {q:"Quel est le stade mythique du FC Barcelone ?", options:["Le Camp Nou","Le Santiago Bernabéu","San Siro","L'Allianz Arena"], correct:"Le Camp Nou"},
+    {q:"Quel pays a remporté la Coupe du Monde de football 2018 en Russie ?", options:["La France","La Croatie","La Belgique","L'Angleterre"], correct:"La France"},
+    {q:"Combien de points vaut un essai au rugby à XV, avant transformation ?", options:["5 points","3 points","7 points","6 points"], correct:"5 points"},
+    {q:"Quel joueur camerounais a été double Ballon d'Or africain et a joué au FC Barcelone puis à l'Inter Milan ?", options:["Samuel Eto'o","Roger Milla","Rigobert Song","Patrick Mboma"], correct:"Samuel Eto'o"},
+    {q:"Quelle nage olympique est considérée comme la plus rapide sur 50 mètres ?", options:["Le crawl (nage libre)","La brasse","Le dos crawlé","Le papillon"], correct:"Le crawl (nage libre)"},
+    {q:"Combien de manches (sets) faut-il gagner pour remporter un match de volley-ball en 5 sets ?", options:["3","2","4","5"], correct:"3"},
+    {q:"Quel pays organise traditionnellement le tournoi de tennis de Roland-Garros ?", options:["La France","Le Royaume-Uni","Les États-Unis","L'Australie"], correct:"La France"},
+    {q:"Quel coureur kényan a longtemps détenu le record du monde du marathon, sous les 2h01 ?", options:["Eliud Kipchoge","Kenenisa Bekele","Mo Farah","Haile Gebrselassie"], correct:"Eliud Kipchoge"},
+    {q:"Quel sport se joue avec une crosse et un palet sur une patinoire ?", options:["Le hockey sur glace","Le curling","Le patinage artistique","Le bobsleigh"], correct:"Le hockey sur glace"},
+    {q:"Quel pays a inventé le sport du cricket, aujourd'hui très populaire en Inde et au Pakistan ?", options:["L'Angleterre","L'Inde","L'Australie","L'Afrique du Sud"], correct:"L'Angleterre"},
+    {q:"Combien de joueurs compose une équipe de handball sur le terrain, gardien inclus ?", options:["7","6","5","11"], correct:"7"}
   ]},
   musique: { label:"🎵 Musique", emoji:"🎵", desc:"Classique, chanson française, pop, compositeurs", questions:[
     {q:"Quel saxophoniste camerounais est l'auteur du tube international « Soul Makossa » (1972) ?", options:["Manu Dibango","Richard Bona","Petit Pays","Sam Fan Thomas"], correct:"Manu Dibango"},
@@ -668,7 +796,15 @@ const THEMES = {
     {q:"Quel groupe britannique, mené par Freddie Mercury, a composé « Bohemian Rhapsody » ?", options:["Queen","The Beatles","Led Zeppelin","The Who"], correct:"Queen"},
     {q:"Quelle chanteuse camerounaise est reconnue pour son style afro-soul et son titre « Bikutsi Blues » ?", options:["Charlotte Dipanda","Blanche Bailly","Daphné","K-Tino"], correct:"Charlotte Dipanda"},
     {q:"Quel rappeur camerounais s'est fait connaître en 2013 avec le tube « Hein Père » ?", options:["Stanley Enow","Franko","Mink's","Jovi"], correct:"Stanley Enow"},
-    {q:"Le titre « Soul Makossa » de Manu Dibango a été samplé par quelle star internationale de la pop ?", options:["Michael Jackson","Beyoncé","Prince","Elton John"], correct:"Michael Jackson"}
+    {q:"Le titre « Soul Makossa » de Manu Dibango a été samplé par quelle star internationale de la pop ?", options:["Michael Jackson","Beyoncé","Prince","Elton John"], correct:"Michael Jackson"},
+    {q:"Quel compositeur allemand du baroque est l'auteur des « Concertos brandebourgeois » ?", options:["Jean-Sébastien Bach","Georg Friedrich Haendel","Antonio Vivaldi","Georg Philipp Telemann"], correct:"Jean-Sébastien Bach"},
+    {q:"Quel chanteur ivoirien est surnommé « le roi du zouglou » ou du coupé-décalé selon les périodes, connu pour « Premier Gaou » ?", options:["Magic System","Meiway","Alpha Blondy","Tiken Jah Fakoly"], correct:"Magic System"},
+    {q:"Quel groupe suédois de pop, formé en 1972, est l'auteur de « Dancing Queen » ?", options:["ABBA","Roxette","Ace of Base","Europe"], correct:"ABBA"},
+    {q:"Quel chanteur congolais (RDC), figure de la rumba puis du soukous, est surnommé « le sapeur » légendaire ?", options:["Papa Wemba","Koffi Olomide","Franco Luambo","Tabu Ley Rochereau"], correct:"Papa Wemba"},
+    {q:"Quel compositeur italien du 19e siècle est l'auteur des opéras « La Traviata » et « Aïda » ?", options:["Giuseppe Verdi","Giacomo Puccini","Gioachino Rossini","Vincenzo Bellini"], correct:"Giuseppe Verdi"},
+    {q:"Quelle chanteuse française d'origine malienne est connue pour ses titres « Djadja » et « Pookie » ?", options:["Aya Nakamura","Dadju","Shirley Kimbembe","Tayc"], correct:"Aya Nakamura"},
+    {q:"Quel violoniste et compositeur italien virtuose du 19e siècle est réputé avoir vendu son âme au diable pour son talent ?", options:["Niccolò Paganini","Antonio Vivaldi","Giuseppe Tartini","Arcangelo Corelli"], correct:"Niccolò Paganini"},
+    {q:"Quel chanteur nigérian, star de l'afrobeats, est connu pour ses titres « Essence » et « Last Last » ?", options:["Burna Boy","Wizkid","Davido","Rema"], correct:"Burna Boy"}
   ]},
   mythologie: { label:"🏺 Mythologie", emoji:"🏺", desc:"Grecque, romaine, nordique, égyptienne", questions:[
     {q:"Qui est le roi des dieux dans la mythologie grecque ?", options:["Zeus","Poséidon","Hadès","Apollon"], correct:"Zeus"},
@@ -687,7 +823,15 @@ const THEMES = {
     {q:"Quel dieu grec, messager des dieux, porte des sandales ailées ?", options:["Hermès","Apollon","Arès","Dionysos"], correct:"Hermès"},
     {q:"Dans la mythologie nordique, quel loup géant est destiné à tuer Odin lors du Ragnarök ?", options:["Fenrir","Sköll","Hati","Garm"], correct:"Fenrir"},
     {q:"Quel roi mythique grec doit pousser éternellement un rocher en haut d'une montagne ?", options:["Sisyphe","Tantale","Prométhée","Atlas"], correct:"Sisyphe"},
-    {q:"Qui est le titan condamné à porter le monde sur ses épaules dans la mythologie grecque ?", options:["Atlas","Cronos","Prométhée","Océan"], correct:"Atlas"}
+    {q:"Qui est le titan condamné à porter le monde sur ses épaules dans la mythologie grecque ?", options:["Atlas","Cronos","Prométhée","Océan"], correct:"Atlas"},
+    {q:"Quel titan grec a volé le feu aux dieux pour le donner aux hommes, et fut puni par Zeus ?", options:["Prométhée","Atlas","Épiméthée","Cronos"], correct:"Prométhée"},
+    {q:"Qui est la déesse grecque de l'amour et de la beauté, née de l'écume de la mer ?", options:["Aphrodite","Héra","Artémis","Déméter"], correct:"Aphrodite"},
+    {q:"Quel dieu romain de la guerre est l'équivalent d'Arès chez les Grecs ?", options:["Mars","Vulcain","Mercure","Neptune"], correct:"Mars"},
+    {q:"Dans la mythologie égyptienne, quel dieu du soleil traverse le ciel chaque jour sur sa barque ?", options:["Rê (Rê-Horakhty)","Osiris","Seth","Ptah"], correct:"Rê (Rê-Horakhty)"},
+    {q:"Quelle magicienne de la mythologie grecque transforme les compagnons d'Ulysse en pourceaux ?", options:["Circé","Calypso","Médée","Pandore"], correct:"Circé"},
+    {q:"Dans la mythologie nordique, quel arbre gigantesque relie les neuf mondes ?", options:["Yggdrasil","Bifrost","Valhalla","Asgard"], correct:"Yggdrasil"},
+    {q:"Qui est la première femme créée par les dieux grecs, dont la curiosité libère tous les maux de l'humanité ?", options:["Pandore","Gaïa","Perséphone","Déméter"], correct:"Pandore"},
+    {q:"Quel dieu égyptien du chaos et de la tempête est le meurtrier de son frère Osiris ?", options:["Seth","Anubis","Horus","Thot"], correct:"Seth"}
   ]},
   gastronomie: { label:"🍽️ Gastronomie", emoji:"🍽️", desc:"Cuisine, aliments, chefs, spécialités", questions:[
     {q:"Quel plat camerounais à base de feuilles de manioc pilées est souvent servi avec du poisson ou de la viande ?", options:["Le ndolé","Le eru","Le koki","Le achu"], correct:"Le ndolé"},
@@ -706,7 +850,15 @@ const THEMES = {
     {q:"Quel chef français, souvent considéré comme le père de la cuisine moderne, est l'auteur du « Guide culinaire » ?", options:["Auguste Escoffier","Paul Bocuse","Alain Ducasse","Marie-Antoine Carême"], correct:"Auguste Escoffier"},
     {q:"Quel plat espagnol à base de riz safrané, fruits de mer et/ou viande est originaire de Valence ?", options:["La paella","Le gaspacho","La tortilla","Les tapas"], correct:"La paella"},
     {q:"Quel ingrédient principal compose le « eru », plat traditionnel du Sud-Ouest camerounais ?", options:["Des feuilles (eru) et de la viande/poisson","Du poisson séché uniquement","Du maïs pilé","Des arachides"], correct:"Des feuilles (eru) et de la viande/poisson"},
-    {q:"Quelle boisson gazeuse à base de cola a été inventée aux États-Unis à la fin du 19e siècle ?", options:["Le Coca-Cola","Le Pepsi","Le Dr Pepper","Le Sprite"], correct:"Le Coca-Cola"}
+    {q:"Quelle boisson gazeuse à base de cola a été inventée aux États-Unis à la fin du 19e siècle ?", options:["Le Coca-Cola","Le Pepsi","Le Dr Pepper","Le Sprite"], correct:"Le Coca-Cola"},
+    {q:"Quel plat italien, à base de pâte, tomate et fromage fondu, est né à Naples ?", options:["La pizza","Les lasagnes","Les gnocchis","Le risotto"], correct:"La pizza"},
+    {q:"Quel fromage français à pâte persillée est fabriqué dans des caves naturelles de l'Aveyron ?", options:["Le roquefort","Le bleu d'Auvergne","Le camembert","Le comté"], correct:"Le roquefort"},
+    {q:"Quel plat vietnamien consiste en une soupe de nouilles de riz servie avec bouillon et viande ?", options:["Le pho","Le pad thaï","Le bún bò","Le bánh mì"], correct:"Le pho"},
+    {q:"Quelle boisson alcoolisée camerounaise, traditionnelle, est obtenue par distillation ou fermentation de maïs et mil ?", options:["Le bili-bili / le arki","Le vin de palme","Le whisky","Le rhum"], correct:"Le bili-bili / le arki"},
+    {q:"Quel dessert français, feuilleté et fourré à la crème pâtissière, porte le nom d'une célèbre course cycliste ?", options:["Le paris-brest","Le mille-feuille","L'éclair","Le saint-honoré"], correct:"Le paris-brest"},
+    {q:"Quel plat marocain, cuit à l'étouffée dans un plat en terre cuite conique, mélange viande et légumes ?", options:["Le tajine","Le couscous","La pastilla","Le méchoui"], correct:"Le tajine"},
+    {q:"Quelle sauce blanche, à base de jaune d'œuf et de beurre, accompagne souvent les asperges ou le poisson ?", options:["La sauce hollandaise","La béchamel","La sauce béarnaise","La mayonnaise"], correct:"La sauce hollandaise"},
+    {q:"Quel plat camerounais est préparé à base de plantain mûr et sert souvent d'accompagnement aux haricots ?", options:["Le plantain mûr frit ou bouilli","Le ndolé","Le eru","Le achu"], correct:"Le plantain mûr frit ou bouilli"}
   ]},
   celebrites: { label:"👫 Femmes et hommes célèbres", emoji:"👫", desc:"Personnalités historiques, scientifiques, artistes", questions:[
     {q:"Quelle scientifique polonaise-française a remporté deux prix Nobel, en physique et en chimie ?", options:["Marie Curie","Rosalind Franklin","Dorothy Hodgkin","Lise Meitner"], correct:"Marie Curie"},
@@ -723,7 +875,14 @@ const THEMES = {
     {q:"Quel entrepreneur est le cofondateur d'Apple avec Steve Wozniak ?", options:["Steve Jobs","Bill Gates","Larry Ellison","Michael Dell"], correct:"Steve Jobs"},
     {q:"Quelle militante pakistanaise, la plus jeune lauréate du prix Nobel, défend le droit des filles à l'éducation ?", options:["Malala Yousafzai","Benazir Bhutto","Asma Jahangir","Sharmeen Obaid-Chinoy"], correct:"Malala Yousafzai"},
     {q:"Quel explorateur italien est crédité (à tort ou à raison dans l'histoire occidentale) d'avoir « découvert » l'Amérique en 1492 ?", options:["Christophe Colomb","Amerigo Vespucci","Vasco de Gama","Fernand de Magellan"], correct:"Christophe Colomb"},
-    {q:"Quel scientifique britannique est l'auteur de la théorie de la sélection naturelle exposée dans « L'Origine des espèces » ?", options:["Charles Darwin","Alfred Russel Wallace","Gregor Mendel","Thomas Huxley"], correct:"Charles Darwin"}
+    {q:"Quel scientifique britannique est l'auteur de la théorie de la sélection naturelle exposée dans « L'Origine des espèces » ?", options:["Charles Darwin","Alfred Russel Wallace","Gregor Mendel","Thomas Huxley"], correct:"Charles Darwin"},
+    {q:"Quel physicien allemand a développé le concept de la relativité générale, revoyant notre compréhension de la gravité ?", options:["Albert Einstein","Max Planck","Werner Heisenberg","Erwin Schrödinger"], correct:"Albert Einstein"},
+    {q:"Quelle actrice et opposante politique birmane, prix Nobel de la paix, a longtemps été assignée à résidence ?", options:["Aung San Suu Kyi","Benazir Bhutto","Corazon Aquino","Indira Gandhi"], correct:"Aung San Suu Kyi"},
+    {q:"Quel roi du Maroc a mené le pays vers l'indépendance en 1956 ?", options:["Mohammed V","Hassan II","Mohammed VI","Moulay Ismaïl"], correct:"Mohammed V"},
+    {q:"Quel archevêque sud-africain, prix Nobel de la paix, a présidé la Commission Vérité et Réconciliation après l'apartheid ?", options:["Desmond Tutu","Nelson Mandela","Thabo Mbeki","F.W. de Klerk"], correct:"Desmond Tutu"},
+    {q:"Quelle mathématicienne et informaticienne britannique du 19e siècle est considérée comme la première programmeuse de l'histoire ?", options:["Ada Lovelace","Grace Hopper","Hedy Lamarr","Katherine Johnson"], correct:"Ada Lovelace"},
+    {q:"Quel dirigeant cubain a mené la révolution de 1959 et dirigé le pays pendant près de 50 ans ?", options:["Fidel Castro","Che Guevara","Raúl Castro","Camilo Cienfuegos"], correct:"Fidel Castro"},
+    {q:"Quelle féministe française, autrice du « Deuxième Sexe », est une figure majeure de la philosophie existentialiste ?", options:["Simone de Beauvoir","Simone Veil","Olympe de Gouges","Élisabeth Badinter"], correct:"Simone de Beauvoir"}
   ]},
   culture_generale: { label:"💬 Culture générale", emoji:"💬", desc:"Mélange de connaissances diverses", questions:[
     {q:"Quelle est la monnaie officielle du Cameroun ?", options:["Le Franc CFA","Le Naira","Le Cedi","Le Dollar"], correct:"Le Franc CFA"},
@@ -743,7 +902,15 @@ const THEMES = {
     {q:"Quelle est l'unité monétaire officielle de la zone euro ?", options:["L'euro","Le franc","Le mark","La lire"], correct:"L'euro"},
     {q:"Quel est le plus petit continent du monde ?", options:["L'Océanie","L'Europe","L'Antarctique","L'Amérique du Sud"], correct:"L'Océanie"},
     {q:"Combien de temps dure généralement une année bissextile de plus qu'une année normale ?", options:["Un jour","Une semaine","Un mois","Une heure"], correct:"Un jour"},
-    {q:"Quel est l'organe institutionnel régional regroupant les pays d'Afrique centrale et occidentale utilisant le Franc CFA ?", options:["La CEMAC / l'UEMOA","L'Union africaine","La CEDEAO seule","La SADC"], correct:"La CEMAC / l'UEMOA"}
+    {q:"Quel est l'organe institutionnel régional regroupant les pays d'Afrique centrale et occidentale utilisant le Franc CFA ?", options:["La CEMAC / l'UEMOA","L'Union africaine","La CEDEAO seule","La SADC"], correct:"La CEMAC / l'UEMOA"},
+    {q:"Quelle est la capitale administrative officielle des Pays-Bas ?", options:["Amsterdam","La Haye","Rotterdam","Utrecht"], correct:"Amsterdam"},
+    {q:"Combien de temps dure en moyenne une grossesse humaine ?", options:["9 mois (environ 40 semaines)","7 mois","10 mois","8 mois"], correct:"9 mois (environ 40 semaines)"},
+    {q:"Quel est le nom donné à un groupe de lions vivant ensemble ?", options:["Une horde","Un troupeau","Une meute","Un clan"], correct:"Une horde"},
+    {q:"Quelle est la plus grande démocratie du monde en nombre d'électeurs ?", options:["L'Inde","Les États-Unis","L'Indonésie","Le Brésil"], correct:"L'Inde"},
+    {q:"Quel est le nom scientifique de l'être humain moderne ?", options:["Homo sapiens","Homo erectus","Homo habilis","Neandertal"], correct:"Homo sapiens"},
+    {q:"Quelle est l'organisation sportive qui organise les Jeux Olympiques ?", options:["Le CIO (Comité International Olympique)","La FIFA","L'ONU","L'UNESCO"], correct:"Le CIO (Comité International Olympique)"},
+    {q:"Quel pourcentage de la surface de la Terre est recouvert d'eau, environ ?", options:["71%","50%","85%","60%"], correct:"71%"},
+    {q:"Quelle agence de l'ONU est chargée de la santé publique mondiale ?", options:["L'OMS (Organisation Mondiale de la Santé)","L'UNICEF","Le PNUD","La FAO"], correct:"L'OMS (Organisation Mondiale de la Santé)"}
   ]},
   vocabulaire: { label:"🗣️ Vocabulaire / langue française", emoji:"🗣️", desc:"Définitions, expressions, étymologie, synonymes", questions:[
     {q:"Quel est le synonyme du mot « heureux » ?", options:["Joyeux","Triste","Fatigué","Anxieux"], correct:"Joyeux"},
@@ -763,7 +930,15 @@ const THEMES = {
     {q:"Quel est le sens du mot « pléonasme », comme dans « monter en haut » ?", options:["Une répétition inutile de sens","Une figure de style poétique","Un mot rare","Une erreur de conjugaison"], correct:"Une répétition inutile de sens"},
     {q:"Que signifie l'expression « avoir un chat dans la gorge » ?", options:["Être enroué","Avoir peur","Avoir faim","Être en colère"], correct:"Être enroué"},
     {q:"Quel est le sens du verbe « vitupérer » ?", options:["Critiquer violemment","Féliciter","Ignorer","Encourager"], correct:"Critiquer violemment"},
-    {q:"Que signifie l'expression « donner sa langue au chat » ?", options:["Renoncer à deviner et demander la réponse","Se taire définitivement","Insulter quelqu'un","Mentir"], correct:"Renoncer à deviner et demander la réponse"}
+    {q:"Que signifie l'expression « donner sa langue au chat » ?", options:["Renoncer à deviner et demander la réponse","Se taire définitivement","Insulter quelqu'un","Mentir"], correct:"Renoncer à deviner et demander la réponse"},
+    {q:"Que signifie l'expression « avoir un poil dans la main » ?", options:["Être paresseux","Être maladroit","Être malchanceux","Être nerveux"], correct:"Être paresseux"},
+    {q:"Quel est le sens du mot « acabit », comme dans « du même acabit » ?", options:["De même nature, de même genre","De grande qualité","De couleur différente","D'origine inconnue"], correct:"De même nature, de même genre"},
+    {q:"Que signifie l'expression « mettre la charrue avant les bœufs » ?", options:["Faire les choses dans le mauvais ordre","Travailler dur","Aller trop lentement","Se disputer sans raison"], correct:"Faire les choses dans le mauvais ordre"},
+    {q:"Quel est le sens du verbe « tergiverser » ?", options:["Hésiter, user de détours pour ne pas se décider","Décider rapidement","Mentir ouvertement","Travailler avec ardeur"], correct:"Hésiter, user de détours pour ne pas se décider"},
+    {q:"Que signifie l'expression « avoir la puce à l'oreille » ?", options:["Avoir des soupçons, se méfier","Être distrait","Avoir mal à la tête","Être très heureux"], correct:"Avoir des soupçons, se méfier"},
+    {q:"Quel est l'antonyme du mot « minuscule » ?", options:["Gigantesque","Petit","Discret","Fragile"], correct:"Gigantesque"},
+    {q:"Que signifie l'expression « avoir le cafard » ?", options:["Être triste, déprimé","Être en colère","Être fatigué","Avoir faim"], correct:"Être triste, déprimé"},
+    {q:"Quel est le sens du mot « bucolique » ?", options:["Qui évoque la campagne de façon paisible et poétique","Qui évoque la ville moderne","Qui est bruyant et agité","Qui est effrayant"], correct:"Qui évoque la campagne de façon paisible et poétique"}
   ]},
   vie_quotidienne: { label:"📰 Vie quotidienne / société", emoji:"📰", desc:"Objets, métiers, usages, faits de société", questions:[
     {q:"Quel objet du quotidien sert à mesurer la température ?", options:["Le thermomètre","Le baromètre","L'hygromètre","L'altimètre"], correct:"Le thermomètre"},
@@ -781,7 +956,14 @@ const THEMES = {
     {q:"Quel service public permet d'envoyer des lettres et des colis ?", options:["La poste","La banque","La mairie","Le commissariat"], correct:"La poste"},
     {q:"Quel métier consiste à enseigner à des élèves dans une école ?", options:["L'enseignant / le professeur","Le formateur uniquement","L'éducateur uniquement","Le tuteur uniquement"], correct:"L'enseignant / le professeur"},
     {q:"Comment appelle-t-on le fait de trier ses déchets pour les recycler ?", options:["Le tri sélectif","Le compostage uniquement","L'incinération","La collecte simple"], correct:"Le tri sélectif"},
-    {q:"Quel document est nécessaire pour conduire légalement une voiture ?", options:["Le permis de conduire","La carte grise seule","L'assurance seule","Le contrôle technique seul"], correct:"Le permis de conduire"}
+    {q:"Quel document est nécessaire pour conduire légalement une voiture ?", options:["Le permis de conduire","La carte grise seule","L'assurance seule","Le contrôle technique seul"], correct:"Le permis de conduire"},
+    {q:"Quel appareil permet de communiquer à distance par la voix, popularisé au 20e siècle ?", options:["Le téléphone","Le télégraphe","La radio","Le fax"], correct:"Le téléphone"},
+    {q:"Quel métier consiste à éteindre les incendies et secourir les personnes en danger ?", options:["Sapeur-pompier","Policier","Ambulancier","Gendarme"], correct:"Sapeur-pompier"},
+    {q:"Quel document bancaire permet de retirer de l'argent à un distributeur automatique ?", options:["La carte bancaire","Le chéquier","Le relevé de compte","Le RIB"], correct:"La carte bancaire"},
+    {q:"Quel service permet de regarder des films et séries en streaming par abonnement mensuel ?", options:["Une plateforme de streaming (ex: Netflix)","La télévision hertzienne","La radio","Le cinéma"], correct:"Une plateforme de streaming (ex: Netflix)"},
+    {q:"Quel métier consiste à préparer et vendre du pain et des viennoiseries ?", options:["Le boulanger","Le pâtissier","Le boucher","Le traiteur"], correct:"Le boulanger"},
+    {q:"Comment appelle-t-on l'ensemble des règles qui organisent la vie en société et sont sanctionnées par l'État ?", options:["La loi","La coutume","La morale","La religion"], correct:"La loi"},
+    {q:"Quel document permet de prouver qu'on a payé un achat, utile en cas de retour ou de garantie ?", options:["Le ticket de caisse (reçu)","Le devis","Le catalogue","Le bon de commande"], correct:"Le ticket de caisse (reçu)"}
   ]}
 };
 
@@ -2001,8 +2183,8 @@ function renderQuizResults(activeGame, myResult){
             <div class="podium-avatar">${avatarFill(r.player)}</div>
             <div class="podium-name">${r.player}</div>
             <div class="buzzer">
-              <div class="buzzer-btn"></div>
-              <div class="buzzer-body"><div class="buzzer-screen">${r.score}</div></div>
+              <div class="buzzer-cap"></div>
+              <div class="buzzer-column"><div class="buzzer-screen">${r.score}</div></div>
             </div>
           </div>
         `).join('')}</div>` : `<p class="small-note">En attente des autres joueurs...</p>`;
